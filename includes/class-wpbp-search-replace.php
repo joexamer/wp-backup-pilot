@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- URL replacement must update WordPress tables directly.
+
 class WPBP_Search_Replace {
 	const CHUNK_ROWS = 200;
 
@@ -279,3 +281,5 @@ class WPBP_Search_Replace {
 		return $text;
 	}
 }
+
+// phpcs:enable WordPress.DB.DirectDatabaseQuery

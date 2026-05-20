@@ -1,6 +1,6 @@
 # Building a Reliable Backup, Restore, and Migration Plugin for WordPress
 
-WP Backup Pilot is a free, open-source plugin by **Yousef Amer** built to demonstrate senior WordPress plugin engineering through a real operational product.
+Backup Pilot is a free, open-source plugin by **Yousef Amer** built to demonstrate senior WordPress plugin engineering through a real operational product.
 
 ## Case Study Positioning
 
@@ -22,7 +22,7 @@ Backup plugins look simple from the outside: export files, export database, zip 
 
 ## The Solution
 
-WP Backup Pilot uses a staged package model:
+Backup Pilot uses a staged package model:
 
 1. Create a ZIP package with `manifest.json`, `database.sql`, and managed files.
 2. Validate package structure, metadata, checksums, and requirements.

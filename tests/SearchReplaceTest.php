@@ -5,6 +5,8 @@
  * @package WPBackupPilot
  */
 
+// phpcs:ignoreFile -- PHPUnit tests run outside the WordPress admin runtime.
+
 require_once dirname( __DIR__ ) . '/includes/class-wpbp-search-replace.php';
 
 class WPBP_SearchReplaceTest extends PHPUnit\Framework\TestCase {

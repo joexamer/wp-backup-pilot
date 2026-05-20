@@ -33,7 +33,7 @@ class WPBP_Retention {
 		$normal = array();
 		$pre    = array();
 		foreach ( $files as $file ) {
-			if ( 0 === strpos( basename( $file ), 'wp-backup-pilot-pre-restore-' ) ) {
+			if ( 0 === strpos( basename( $file ), 'backup-pilot-pre-restore-' ) ) {
 				$pre[] = $file;
 			} else {
 				$normal[] = $file;
@@ -58,7 +58,7 @@ class WPBP_Retention {
 		foreach ( $files as $index => $file ) {
 			$too_many = $keep > 0 && $index >= $keep;
 			$too_old  = $cutoff > 0 && filemtime( $file ) < $cutoff;
-			if ( ( 0 === $keep || $too_many || $too_old ) && @unlink( $file ) ) {
+			if ( ( 0 === $keep || $too_many || $too_old ) && WPBP_Filesystem::delete_file( $file ) ) {
 				++$deleted;
 			}
 		}

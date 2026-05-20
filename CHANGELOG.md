@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to WP Backup Pilot will be documented in this file.
+All notable changes to Backup Pilot will be documented in this file.
 
 The format follows Keep a Changelog, and releases use semantic versioning.
 

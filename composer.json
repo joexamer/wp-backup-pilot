@@ -1,5 +1,5 @@
 {
-  "name": "wp-backup-pilot/wp-backup-pilot",
+  "name": "backup-pilot/backup-pilot",
   "description": "WordPress backup, restore, and migration plugin.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
@@ -10,8 +10,8 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/joexamer/wp-backup-pilot/issues",
-    "source": "https://github.com/joexamer/wp-backup-pilot"
+    "issues": "https://github.com/joexamer/backup-pilot/issues",
+    "source": "https://github.com/joexamer/backup-pilot"
   },
   "require-dev": {
     "wp-coding-standards/wpcs": "^3.1",
@@ -21,7 +21,7 @@
   "scripts": {
     "lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
     "phpcs": "phpcs",
-    "test": "phpunit"
+    "test": "phpunit -c tests/phpunit.xml.dist"
   },
   "config": {
     "allow-plugins": {

@@ -2,7 +2,7 @@
 
 ## GitHub First
 
-- Create `yousefamer/wp-backup-pilot`.
+- Create `yousefamer/backup-pilot`.
 - Push the plugin source with `LICENSE`, `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, and `CHANGELOG.md`.
 - Enable Issues and Discussions.
 - Add project boards:

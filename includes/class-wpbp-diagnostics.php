@@ -21,27 +21,27 @@ class WPBP_Diagnostics {
 
 		return array(
 			array(
-				'label'  => __( 'ZipArchive extension', 'wp-backup-pilot' ),
+				'label'  => __( 'ZipArchive extension', 'backup-pilot' ),
 				'status' => class_exists( 'ZipArchive' ) ? 'ok' : 'error',
-				'detail' => class_exists( 'ZipArchive' ) ? __( 'Available', 'wp-backup-pilot' ) : __( 'Missing. Backups cannot be packaged without ZipArchive.', 'wp-backup-pilot' ),
+				'detail' => class_exists( 'ZipArchive' ) ? __( 'Available', 'backup-pilot' ) : __( 'Missing. Backups cannot be packaged without ZipArchive.', 'backup-pilot' ),
 			),
 			array(
-				'label'  => __( 'Storage writable', 'wp-backup-pilot' ),
-				'status' => is_writable( $paths['base'] ) || wp_mkdir_p( $paths['base'] ) ? 'ok' : 'error',
+				'label'  => __( 'Storage writable', 'backup-pilot' ),
+				'status' => WPBP_Filesystem::is_directory_writable( $paths['base'] ) || wp_mkdir_p( $paths['base'] ) ? 'ok' : 'error',
 				'detail' => $paths['base'],
 			),
 			array(
-				'label'  => __( 'Free disk space', 'wp-backup-pilot' ),
+				'label'  => __( 'Free disk space', 'backup-pilot' ),
 				'status' => false === $free || $free > 256 * MB_IN_BYTES ? 'ok' : 'warning',
-				'detail' => false === $free ? __( 'Unable to detect.', 'wp-backup-pilot' ) : size_format( $free, 2 ),
+				'detail' => false === $free ? __( 'Unable to detect.', 'backup-pilot' ) : size_format( $free, 2 ),
 			),
 			array(
-				'label'  => __( 'Multisite', 'wp-backup-pilot' ),
+				'label'  => __( 'Multisite', 'backup-pilot' ),
 				'status' => is_multisite() ? 'warning' : 'ok',
-				'detail' => is_multisite() ? __( 'Multisite is detected. Current support is experimental.', 'wp-backup-pilot' ) : __( 'Single site install.', 'wp-backup-pilot' ),
+				'detail' => is_multisite() ? __( 'Multisite is detected. Current support is experimental.', 'backup-pilot' ) : __( 'Single site install.', 'backup-pilot' ),
 			),
 			array(
-				'label'  => __( 'PHP memory limit', 'wp-backup-pilot' ),
+				'label'  => __( 'PHP memory limit', 'backup-pilot' ),
 				'status' => 'ok',
 				'detail' => ini_get( 'memory_limit' ),
 			),

@@ -1,6 +1,6 @@
 ## Summary
 
-Describe the change and why it belongs in WP Backup Pilot.
+Describe the change and why it belongs in Backup Pilot.
 
 ## Testing
 

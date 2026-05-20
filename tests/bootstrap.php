@@ -8,6 +8,8 @@
  * @package WPBackupPilot
  */
 
+// phpcs:ignoreFile -- Test bootstrap defines WordPress function shims for isolated PHPUnit runs.
+
 if ( getenv( 'WP_TESTS_DIR' ) ) {
 	require getenv( 'WP_TESTS_DIR' ) . '/includes/bootstrap.php';
 	return;

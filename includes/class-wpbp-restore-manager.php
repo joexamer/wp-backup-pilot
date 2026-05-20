@@ -59,7 +59,8 @@ class WPBP_Restore_Manager {
 			return new WP_Error(
 				'wpbp_pre_restore_backup_failed',
 				sprintf(
-					__( 'Restore stopped because the automatic pre-restore backup failed: %s', 'wp-backup-pilot' ),
+					/* translators: %s: error message from the failed safety backup. */
+					__( 'Restore stopped because the automatic pre-restore backup failed: %s', 'backup-pilot' ),
 					$safety_backup->get_error_message()
 				)
 			);
@@ -150,7 +151,11 @@ class WPBP_Restore_Manager {
 		if ( is_wp_error( $safety_backup ) ) {
 			return new WP_Error(
 				'wpbp_pre_restore_backup_failed',
-				sprintf( __( 'Restore stopped because the automatic pre-restore backup failed: %s', 'wp-backup-pilot' ), $safety_backup->get_error_message() )
+				sprintf(
+					/* translators: %s: error message from the failed safety backup. */
+					__( 'Restore stopped because the automatic pre-restore backup failed: %s', 'backup-pilot' ),
+					$safety_backup->get_error_message()
+				)
 			);
 		}
 
@@ -206,7 +211,7 @@ class WPBP_Restore_Manager {
 				return $this->process_cleanup_chunk( $state );
 		}
 
-		return new WP_Error( 'wpbp_restore_bad_phase', __( 'Restore job phase is invalid.', 'wp-backup-pilot' ) );
+		return new WP_Error( 'wpbp_restore_bad_phase', __( 'Restore job phase is invalid.', 'backup-pilot' ) );
 	}
 
 	/**
@@ -259,20 +264,20 @@ class WPBP_Restore_Manager {
 	 */
 	private function restore_files( $source_wp_content ) {
 		if ( ! is_dir( $source_wp_content ) ) {
-			return new WP_Error( 'wpbp_restore_files_missing', __( 'The package file contents are missing.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_restore_files_missing', __( 'The package file contents are missing.', 'backup-pilot' ) );
 		}
 
 		$sections        = array( 'uploads', 'themes', 'plugins' );
 		$restored        = array();
-		$preserve_plugin = trailingslashit( WP_CONTENT_DIR ) . 'plugins/wp-backup-pilot';
+		$preserve_plugin = trailingslashit( WP_CONTENT_DIR ) . 'plugins/backup-pilot';
 		$storage_paths   = WPBP_Filesystem::paths();
 		$preserve_store  = $storage_paths['base'];
 		$preserve_temp   = trailingslashit( sys_get_temp_dir() ) . 'wpbp-preserve-' . wp_generate_password( 8, false, false );
 		if ( ! wp_mkdir_p( $preserve_temp ) ) {
-			return new WP_Error( 'wpbp_preserve_failed', __( 'Could not create a temporary plugin preservation directory.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_preserve_failed', __( 'Could not create a temporary plugin preservation directory.', 'backup-pilot' ) );
 		}
 
-		$preserved_copy  = trailingslashit( $preserve_temp ) . 'wp-backup-pilot';
+		$preserved_copy  = trailingslashit( $preserve_temp ) . 'backup-pilot';
 		$preserved_store = trailingslashit( $preserve_temp ) . 'storage';
 		if ( is_dir( $preserve_plugin ) ) {
 			WPBP_Filesystem::copy_tree( $preserve_plugin, $preserved_copy );
@@ -353,7 +358,7 @@ class WPBP_Restore_Manager {
 		if ( ! empty( $state['includes']['database'] ) && ! empty( $checksums['database_sql'] ) ) {
 			$sql_file = trailingslashit( $state['staging'] ) . 'database.sql';
 			if ( ! is_readable( $sql_file ) || hash_file( 'sha256', $sql_file ) !== $checksums['database_sql'] ) {
-				return new WP_Error( 'wpbp_checksum_database_failed', __( 'The database checksum does not match the package manifest.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_checksum_database_failed', __( 'The database checksum does not match the package manifest.', 'backup-pilot' ) );
 			}
 		}
 
@@ -361,7 +366,8 @@ class WPBP_Restore_Manager {
 			foreach ( $checksums['files'] as $relative => $hash ) {
 				$file = trailingslashit( $state['staging'] ) . ltrim( $relative, '/' );
 				if ( ! is_readable( $file ) || hash_file( 'sha256', $file ) !== $hash ) {
-					return new WP_Error( 'wpbp_checksum_file_failed', sprintf( __( 'A package file failed checksum validation: %s', 'wp-backup-pilot' ), $relative ) );
+					/* translators: %s: relative file path inside the package. */
+					return new WP_Error( 'wpbp_checksum_file_failed', sprintf( __( 'A package file failed checksum validation: %s', 'backup-pilot' ), $relative ) );
 				}
 			}
 		}
@@ -468,13 +474,13 @@ class WPBP_Restore_Manager {
 
 		$preserve_temp = trailingslashit( sys_get_temp_dir() ) . 'wpbp-preserve-' . wp_generate_password( 8, false, false );
 		if ( ! wp_mkdir_p( $preserve_temp ) ) {
-			return new WP_Error( 'wpbp_preserve_failed', __( 'Could not create a temporary plugin preservation directory.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_preserve_failed', __( 'Could not create a temporary plugin preservation directory.', 'backup-pilot' ) );
 		}
 
 		$storage_paths   = WPBP_Filesystem::paths();
-		$preserve_plugin = trailingslashit( WP_CONTENT_DIR ) . 'plugins/wp-backup-pilot';
+		$preserve_plugin = trailingslashit( WP_CONTENT_DIR ) . 'plugins/backup-pilot';
 		if ( is_dir( $preserve_plugin ) ) {
-			WPBP_Filesystem::copy_tree( $preserve_plugin, trailingslashit( $preserve_temp ) . 'wp-backup-pilot' );
+			WPBP_Filesystem::copy_tree( $preserve_plugin, trailingslashit( $preserve_temp ) . 'backup-pilot' );
 		}
 		if ( is_dir( $storage_paths['base'] ) ) {
 			WPBP_Filesystem::copy_tree( $storage_paths['base'], trailingslashit( $preserve_temp ) . 'storage' );
@@ -492,7 +498,7 @@ class WPBP_Restore_Manager {
 		$files = $this->build_restore_file_list( $source_wp_content );
 		$list  = trailingslashit( $state['staging'] ) . 'restore-file-list.json';
 		if ( false === file_put_contents( $list, wp_json_encode( $files ) ) ) {
-			return new WP_Error( 'wpbp_restore_file_list_failed', __( 'Could not write restore file list.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_restore_file_list_failed', __( 'Could not write restore file list.', 'backup-pilot' ) );
 		}
 
 		$state['preserve_temp']     = $preserve_temp;
@@ -514,7 +520,7 @@ class WPBP_Restore_Manager {
 	private function process_file_restore_chunk( array $state ) {
 		$files = json_decode( file_get_contents( $state['restore_file_list'] ), true );
 		if ( ! is_array( $files ) ) {
-			return new WP_Error( 'wpbp_restore_file_list_missing', __( 'Restore file list could not be read.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_restore_file_list_missing', __( 'Restore file list could not be read.', 'backup-pilot' ) );
 		}
 
 		$index = (int) $state['file_index'];
@@ -547,8 +553,8 @@ class WPBP_Restore_Manager {
 	private function process_cleanup_chunk( array $state ) {
 		$storage_paths = WPBP_Filesystem::paths();
 		if ( ! empty( $state['preserve_temp'] ) ) {
-			if ( is_dir( trailingslashit( $state['preserve_temp'] ) . 'wp-backup-pilot' ) ) {
-				WPBP_Filesystem::copy_tree( trailingslashit( $state['preserve_temp'] ) . 'wp-backup-pilot', trailingslashit( WP_CONTENT_DIR ) . 'plugins/wp-backup-pilot' );
+			if ( is_dir( trailingslashit( $state['preserve_temp'] ) . 'backup-pilot' ) ) {
+				WPBP_Filesystem::copy_tree( trailingslashit( $state['preserve_temp'] ) . 'backup-pilot', trailingslashit( WP_CONTENT_DIR ) . 'plugins/backup-pilot' );
 			}
 			if ( is_dir( trailingslashit( $state['preserve_temp'] ) . 'storage' ) ) {
 				WPBP_Filesystem::copy_tree( trailingslashit( $state['preserve_temp'] ) . 'storage', $storage_paths['base'] );
@@ -603,15 +609,15 @@ class WPBP_Restore_Manager {
 	 */
 	private function phase_label( $phase ) {
 		$labels = array(
-			'queued'        => __( 'Queued', 'wp-backup-pilot' ),
-			'extract'       => __( 'Extracting package', 'wp-backup-pilot' ),
-			'verify'        => __( 'Verifying package', 'wp-backup-pilot' ),
-			'database'      => __( 'Importing database', 'wp-backup-pilot' ),
-			'rewrite'       => __( 'Rewriting URLs', 'wp-backup-pilot' ),
-			'files_prepare' => __( 'Preparing files', 'wp-backup-pilot' ),
-			'files'         => __( 'Restoring files', 'wp-backup-pilot' ),
-			'cleanup'       => __( 'Cleaning up', 'wp-backup-pilot' ),
-			'complete'      => __( 'Complete', 'wp-backup-pilot' ),
+			'queued'        => __( 'Queued', 'backup-pilot' ),
+			'extract'       => __( 'Extracting package', 'backup-pilot' ),
+			'verify'        => __( 'Verifying package', 'backup-pilot' ),
+			'database'      => __( 'Importing database', 'backup-pilot' ),
+			'rewrite'       => __( 'Rewriting URLs', 'backup-pilot' ),
+			'files_prepare' => __( 'Preparing files', 'backup-pilot' ),
+			'files'         => __( 'Restoring files', 'backup-pilot' ),
+			'cleanup'       => __( 'Cleaning up', 'backup-pilot' ),
+			'complete'      => __( 'Complete', 'backup-pilot' ),
 		);
 
 		return isset( $labels[ $phase ] ) ? $labels[ $phase ] : $phase;
@@ -626,7 +632,7 @@ class WPBP_Restore_Manager {
 	private function external_work_dir( $prefix ) {
 		$path = trailingslashit( sys_get_temp_dir() ) . 'wpbp-' . sanitize_key( $prefix ) . '-' . gmdate( 'Ymd-His' ) . '-' . wp_generate_password( 8, false, false );
 		if ( ! wp_mkdir_p( $path ) ) {
-			return new WP_Error( 'wpbp_temp_failed', __( 'Could not create an external temporary directory.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_temp_failed', __( 'Could not create an external temporary directory.', 'backup-pilot' ) );
 		}
 
 		return $path;

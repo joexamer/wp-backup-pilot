@@ -1,13 +1,13 @@
-# Contributing To WP Backup Pilot
+# Contributing To Backup Pilot
 
-Thanks for helping improve WP Backup Pilot. This plugin handles backups, restores, database imports, filesystem writes, and migration search/replace, so reliability matters more than cleverness.
+Thanks for helping improve Backup Pilot. This plugin handles backups, restores, database imports, filesystem writes, and migration search/replace, so reliability matters more than cleverness.
 
 ## Development Setup
 
-1. Clone or copy the plugin into `wp-content/plugins/wp-backup-pilot`.
+1. Clone or copy the plugin into `wp-content/plugins/backup-pilot`.
 2. Run `composer install`.
 3. Activate the plugin on a disposable WordPress install.
-4. Use **Tools > WP Backup Pilot** for manual testing.
+4. Use **Tools > Backup Pilot** for manual testing.
 
 ## Before Opening A Pull Request
 

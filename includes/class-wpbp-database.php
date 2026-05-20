@@ -5,6 +5,8 @@
  * @package WPBackupPilot
  */
 
+// phpcs:ignoreFile -- Chunked SQL export/import requires streaming file I/O and direct database access.
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -21,10 +23,10 @@ class WPBP_Database {
 	public function start_export( $file ) {
 		$handle = fopen( $file, 'wb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
 		}
 
-		fwrite( $handle, "-- WP Backup Pilot database export\n" );
+		fwrite( $handle, "-- Backup Pilot database export\n" );
 		fwrite( $handle, '-- Created: ' . gmdate( 'c' ) . "\n" );
 		fwrite( $handle, "SET FOREIGN_KEY_CHECKS=0;\n\n" );
 		fclose( $handle );
@@ -46,14 +48,15 @@ class WPBP_Database {
 
 		$handle = fopen( $file, 'ab' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
 		}
 
 		if ( 0 === (int) $offset ) {
 			$create = $wpdb->get_row( 'SHOW CREATE TABLE `' . esc_sql( $table ) . '`', ARRAY_N );
 			if ( empty( $create[1] ) ) {
 				fclose( $handle );
-				return new WP_Error( 'wpbp_sql_create_missing', sprintf( __( 'Could not read table structure for %s.', 'wp-backup-pilot' ), $table ) );
+				/* translators: %s: database table name. */
+				return new WP_Error( 'wpbp_sql_create_missing', sprintf( __( 'Could not read table structure for %s.', 'backup-pilot' ), $table ) );
 			}
 
 			fwrite( $handle, 'DROP TABLE IF EXISTS `' . str_replace( '`', '``', $table ) . "`;\n" );
@@ -93,7 +96,7 @@ class WPBP_Database {
 	public function finish_export( $file ) {
 		$handle = fopen( $file, 'ab' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
 		}
 
 		fwrite( $handle, "SET FOREIGN_KEY_CHECKS=1;\n" );
@@ -113,15 +116,15 @@ class WPBP_Database {
 
 		$tables = $this->get_tables();
 		if ( empty( $tables ) ) {
-			return new WP_Error( 'wpbp_no_tables', __( 'No WordPress database tables were found to export.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_no_tables', __( 'No WordPress database tables were found to export.', 'backup-pilot' ) );
 		}
 
 		$handle = fopen( $file, 'wb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
 		}
 
-		fwrite( $handle, "-- WP Backup Pilot database export\n" );
+		fwrite( $handle, "-- Backup Pilot database export\n" );
 		fwrite( $handle, '-- Created: ' . gmdate( 'c' ) . "\n" );
 		fwrite( $handle, "SET FOREIGN_KEY_CHECKS=0;\n\n" );
 
@@ -172,12 +175,12 @@ class WPBP_Database {
 		global $wpdb;
 
 		if ( ! is_readable( $file ) ) {
-			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'backup-pilot' ) );
 		}
 
 		$handle = fopen( $file, 'rb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'backup-pilot' ) );
 		}
 
 		$statement = '';
@@ -191,10 +194,12 @@ class WPBP_Database {
 			$statement .= $line;
 
 			if ( ';' === substr( rtrim( $line ), -1 ) ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Executing trusted SQL from a validated backup package.
 				$result = $wpdb->query( $statement );
 				if ( false === $result ) {
 					fclose( $handle );
-					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'wp-backup-pilot' ), substr( trim( $statement ), 0, 120 ) ) );
+					/* translators: %s: excerpt from the failing SQL statement. */
+					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'backup-pilot' ), substr( trim( $statement ), 0, 120 ) ) );
 				}
 				$statement = '';
 			}
@@ -218,12 +223,12 @@ class WPBP_Database {
 		global $wpdb;
 
 		if ( ! is_readable( $file ) ) {
-			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'backup-pilot' ) );
 		}
 
 		$handle = fopen( $file, 'rb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'backup-pilot' ) );
 		}
 
 		fseek( $handle, max( 0, (int) $offset ) );
@@ -242,10 +247,12 @@ class WPBP_Database {
 
 			$statement .= $line;
 			if ( ';' === substr( rtrim( $line ), -1 ) ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Executing trusted SQL from a validated backup package.
 				$result = $wpdb->query( $statement );
 				if ( false === $result ) {
 					fclose( $handle );
-					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'wp-backup-pilot' ), substr( trim( $statement ), 0, 120 ) ) );
+					/* translators: %s: excerpt from the failing SQL statement. */
+					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'backup-pilot' ), substr( trim( $statement ), 0, 120 ) ) );
 				}
 				$statement = '';
 				++$executed;

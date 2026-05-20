@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: WP Backup Pilot
+ * Plugin Name: Backup Pilot
  * Description: Create, restore, and migrate full WordPress site backups from the admin area.
  * Version: 1.0.0
  * Author: Yousef Amer
  * Author URI: https://github.com/joexamer
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: wp-backup-pilot
+ * Text Domain: backup-pilot
  * Requires at least: 6.0
  * Requires PHP: 7.4
  *

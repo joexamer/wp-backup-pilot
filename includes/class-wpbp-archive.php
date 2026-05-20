@@ -22,12 +22,12 @@ class WPBP_Archive {
 	 */
 	public function create_zip( $source_dir, $zip_path ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			return new WP_Error( 'wpbp_zip_missing', __( 'The PHP ZipArchive extension is required.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_missing', __( 'The PHP ZipArchive extension is required.', 'backup-pilot' ) );
 		}
 
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
-			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not create the backup ZIP file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not create the backup ZIP file.', 'backup-pilot' ) );
 		}
 		$this->set_password( $zip );
 
@@ -50,29 +50,29 @@ class WPBP_Archive {
 	 */
 	public function inspect( $zip_path ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			return new WP_Error( 'wpbp_zip_missing', __( 'The PHP ZipArchive extension is required.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_missing', __( 'The PHP ZipArchive extension is required.', 'backup-pilot' ) );
 		}
 
 		if ( ! is_readable( $zip_path ) ) {
-			return new WP_Error( 'wpbp_zip_unreadable', __( 'The backup package is not readable.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_unreadable', __( 'The backup package is not readable.', 'backup-pilot' ) );
 		}
 
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $zip_path ) ) {
-			return new WP_Error( 'wpbp_zip_invalid', __( 'The backup package could not be opened.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_invalid', __( 'The backup package could not be opened.', 'backup-pilot' ) );
 		}
 		$this->set_password( $zip );
 
 		if ( false === $zip->locateName( 'manifest.json' ) ) {
 			$zip->close();
-			return new WP_Error( 'wpbp_zip_missing_entry', __( 'The package is missing manifest.json.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_missing_entry', __( 'The package is missing manifest.json.', 'backup-pilot' ) );
 		}
 
 		$manifest_raw = $zip->getFromName( 'manifest.json' );
 		$manifest     = json_decode( $manifest_raw, true );
 		if ( ! is_array( $manifest ) ) {
 			$zip->close();
-			return new WP_Error( 'wpbp_manifest_invalid', __( 'The package manifest is invalid.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_manifest_invalid', __( 'The package manifest is invalid.', 'backup-pilot' ) );
 		}
 
 		$includes = isset( $manifest['includes'] ) && is_array( $manifest['includes'] ) ? $manifest['includes'] : array(
@@ -81,7 +81,7 @@ class WPBP_Archive {
 		);
 		if ( ! empty( $includes['database'] ) && false === $zip->locateName( 'database.sql' ) ) {
 			$zip->close();
-			return new WP_Error( 'wpbp_zip_missing_entry', __( 'The package is missing database.sql.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_missing_entry', __( 'The package is missing database.sql.', 'backup-pilot' ) );
 		}
 
 		$has_files = false;
@@ -95,7 +95,7 @@ class WPBP_Archive {
 
 		if ( ! empty( $includes['files'] ) && ! $has_files ) {
 			$zip->close();
-			return new WP_Error( 'wpbp_zip_missing_files', __( 'The package does not contain a files directory.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_missing_files', __( 'The package does not contain a files directory.', 'backup-pilot' ) );
 		}
 
 		$zip->close();
@@ -147,13 +147,13 @@ class WPBP_Archive {
 	 */
 	public function add_zip_chunk( $zip_path, array $files, $offset, $limit = self::ZIP_CHUNK_COUNT ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			return new WP_Error( 'wpbp_zip_missing', __( 'The PHP ZipArchive extension is required.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_missing', __( 'The PHP ZipArchive extension is required.', 'backup-pilot' ) );
 		}
 
 		$zip  = new ZipArchive();
 		$mode = file_exists( $zip_path ) ? 0 : ZipArchive::CREATE;
 		if ( true !== $zip->open( $zip_path, $mode ) ) {
-			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not open the backup ZIP file.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not open the backup ZIP file.', 'backup-pilot' ) );
 		}
 		$this->set_password( $zip );
 
@@ -194,7 +194,7 @@ class WPBP_Archive {
 	public function extract_chunk( $zip_path, $destination, $offset, $limit = self::EXTRACT_CHUNK_COUNT ) {
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $zip_path ) ) {
-			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not open the backup package.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not open the backup package.', 'backup-pilot' ) );
 		}
 		$this->set_password( $zip );
 
@@ -204,14 +204,14 @@ class WPBP_Archive {
 			$name = $zip->getNameIndex( $i );
 			if ( false !== strpos( $name, '..' ) || 0 === strpos( $name, '/' ) || preg_match( '#^[A-Za-z]:#', $name ) ) {
 				$zip->close();
-				return new WP_Error( 'wpbp_zip_unsafe_path', __( 'The package contains an unsafe file path.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_zip_unsafe_path', __( 'The package contains an unsafe file path.', 'backup-pilot' ) );
 			}
 			$names[] = $name;
 		}
 
 		if ( ! empty( $names ) && ! $zip->extractTo( $destination, $names ) ) {
 			$zip->close();
-			return new WP_Error( 'wpbp_zip_extract_failed', __( 'Could not extract the backup package.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_extract_failed', __( 'Could not extract the backup package.', 'backup-pilot' ) );
 		}
 
 		$total = $zip->numFiles;
@@ -235,7 +235,7 @@ class WPBP_Archive {
 	public function extract( $zip_path, $destination ) {
 		$zip = new ZipArchive();
 		if ( true !== $zip->open( $zip_path ) ) {
-			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not open the backup package.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_open_failed', __( 'Could not open the backup package.', 'backup-pilot' ) );
 		}
 		$this->set_password( $zip );
 
@@ -243,13 +243,13 @@ class WPBP_Archive {
 			$name = $zip->getNameIndex( $i );
 			if ( false !== strpos( $name, '..' ) || 0 === strpos( $name, '/' ) || preg_match( '#^[A-Za-z]:#', $name ) ) {
 				$zip->close();
-				return new WP_Error( 'wpbp_zip_unsafe_path', __( 'The package contains an unsafe file path.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_zip_unsafe_path', __( 'The package contains an unsafe file path.', 'backup-pilot' ) );
 			}
 		}
 
 		if ( ! $zip->extractTo( $destination ) ) {
 			$zip->close();
-			return new WP_Error( 'wpbp_zip_extract_failed', __( 'Could not extract the backup package.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_extract_failed', __( 'Could not extract the backup package.', 'backup-pilot' ) );
 		}
 
 		$zip->close();

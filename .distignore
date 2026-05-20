@@ -1,0 +1,13 @@
+.github/
+tests/
+.gitignore
+.distignore
+composer.json
+composer.lock
+vendor/
+phpcs.xml
+README.md
+CONTRIBUTING.md
+CHANGELOG.md
+SECURITY.md
+docs/

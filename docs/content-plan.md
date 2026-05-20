@@ -1,6 +1,6 @@
 # Content Plan
 
-WP Backup Pilot should build technical authority around difficult WordPress plugin engineering problems, then repurpose each topic across GitHub, portfolio, LinkedIn, and short demo clips.
+Backup Pilot should build technical authority around difficult WordPress plugin engineering problems, then repurpose each topic across GitHub, portfolio, LinkedIn, and short demo clips.
 
 ## Core Series
 

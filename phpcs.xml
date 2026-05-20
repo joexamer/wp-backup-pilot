@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="WP Backup Pilot">
-	<description>WordPress Coding Standards for WP Backup Pilot.</description>
+<ruleset name="Backup Pilot">
+	<description>WordPress Coding Standards for Backup Pilot.</description>
 	<file>.</file>
 	<exclude-pattern>vendor/*</exclude-pattern>
 	<exclude-pattern>tests/*</exclude-pattern>

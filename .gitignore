@@ -7,3 +7,4 @@
 *.sql
 *.log
 .DS_Store
+tests/.phpunit.result.cache

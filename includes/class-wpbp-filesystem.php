@@ -10,7 +10,59 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WPBP_Filesystem {
-	const STORAGE_DIR = 'wp-backup-pilot';
+	const STORAGE_DIR = 'backup-pilot';
+
+	/**
+	 * Initialize the WordPress filesystem API.
+	 *
+	 * @return WP_Filesystem_Base|false
+	 */
+	public static function wp_filesystem() {
+		global $wp_filesystem;
+
+		if ( ! empty( $wp_filesystem ) ) {
+			return $wp_filesystem;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		if ( ! WP_Filesystem() ) {
+			return false;
+		}
+
+		return $wp_filesystem;
+	}
+
+	/**
+	 * Check whether a directory is writable.
+	 *
+	 * @param string $directory Directory path.
+	 * @return bool
+	 */
+	public static function is_directory_writable( $directory ) {
+		$wp_filesystem = self::wp_filesystem();
+		if ( $wp_filesystem ) {
+			return $wp_filesystem->is_writable( $directory );
+		}
+
+		return wp_is_writable( $directory );
+	}
+
+	/**
+	 * Delete a file using WordPress APIs.
+	 *
+	 * @param string $path File path.
+	 * @return bool
+	 */
+	public static function delete_file( $path ) {
+		if ( ! $path || ! file_exists( $path ) ) {
+			return true;
+		}
+
+		wp_delete_file( $path );
+
+		return ! file_exists( $path );
+	}
 
 	/**
 	 * Get upload based paths.
@@ -53,7 +105,7 @@ class WPBP_Filesystem {
 	 * @return void
 	 */
 	public static function write_protection_files( $directory ) {
-		if ( ! is_dir( $directory ) || ! is_writable( $directory ) ) {
+		if ( ! is_dir( $directory ) || ! self::is_directory_writable( $directory ) ) {
 			return;
 		}
 
@@ -84,7 +136,7 @@ class WPBP_Filesystem {
 			return $base;
 		}
 
-		return new WP_Error( 'wpbp_work_dir_failed', __( 'Could not create a temporary working directory.', 'wp-backup-pilot' ) );
+		return new WP_Error( 'wpbp_work_dir_failed', __( 'Could not create a temporary working directory.', 'backup-pilot' ) );
 	}
 
 	/**
@@ -98,8 +150,14 @@ class WPBP_Filesystem {
 			return;
 		}
 
+		$wp_filesystem = self::wp_filesystem();
+		if ( $wp_filesystem ) {
+			$wp_filesystem->delete( $path, true, 'd' );
+			return;
+		}
+
 		if ( is_file( $path ) || is_link( $path ) ) {
-			@unlink( $path );
+			self::delete_file( $path );
 			return;
 		}
 
@@ -116,7 +174,10 @@ class WPBP_Filesystem {
 			self::delete_tree( trailingslashit( $path ) . $item );
 		}
 
-		@rmdir( $path );
+		$wp_filesystem = self::wp_filesystem();
+		if ( $wp_filesystem ) {
+			$wp_filesystem->rmdir( $path );
+		}
 	}
 
 	/**

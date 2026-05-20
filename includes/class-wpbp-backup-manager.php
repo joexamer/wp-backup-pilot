@@ -31,7 +31,7 @@ class WPBP_Backup_Manager {
 		$context  = sanitize_key( $context );
 		$profile  = $this->sanitize_profile( $profile );
 		$includes = $this->profile_includes( $profile );
-		$prefix   = 'pre-restore' === $context ? 'wp-backup-pilot-pre-restore' : 'wp-backup-pilot';
+		$prefix   = 'pre-restore' === $context ? 'backup-pilot-pre-restore' : 'backup-pilot';
 		$paths    = WPBP_Filesystem::paths();
 		$filename = $prefix . '-' . gmdate( 'Ymd-His' ) . '.zip';
 		$zip_path = trailingslashit( $paths['backups'] ) . $filename;
@@ -102,7 +102,7 @@ class WPBP_Backup_Manager {
 		$profile   = $this->sanitize_profile( $profile );
 		$includes  = $this->profile_includes( $profile );
 		$paths     = WPBP_Filesystem::paths();
-		$filename  = 'wp-backup-pilot-' . gmdate( 'Ymd-His' ) . '.zip';
+		$filename  = 'backup-pilot-' . gmdate( 'Ymd-His' ) . '.zip';
 		$zip_path  = trailingslashit( $paths['backups'] ) . $filename;
 		$sql_file  = trailingslashit( $work_dir ) . 'database.sql';
 		$files_dir = trailingslashit( $work_dir ) . 'files/wp-content';
@@ -114,7 +114,7 @@ class WPBP_Backup_Manager {
 			$tables   = $database->get_tables();
 			if ( empty( $tables ) ) {
 				WPBP_Filesystem::delete_tree( $work_dir );
-				return new WP_Error( 'wpbp_no_tables', __( 'No WordPress database tables were found to export.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_no_tables', __( 'No WordPress database tables were found to export.', 'backup-pilot' ) );
 			}
 
 			$started = $database->start_export( $sql_file );
@@ -128,7 +128,7 @@ class WPBP_Backup_Manager {
 		$file_list_path = trailingslashit( $work_dir ) . 'file-list.json';
 		if ( false === file_put_contents( $file_list_path, wp_json_encode( $file_list ) ) ) {
 			WPBP_Filesystem::delete_tree( $work_dir );
-			return new WP_Error( 'wpbp_file_list_write_failed', __( 'Could not write the backup file list.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_file_list_write_failed', __( 'Could not write the backup file list.', 'backup-pilot' ) );
 		}
 
 		return array(
@@ -163,7 +163,7 @@ class WPBP_Backup_Manager {
 	 */
 	public function process_chunk( array $state ) {
 		if ( empty( $state['phase'] ) || empty( $state['work_dir'] ) ) {
-			return new WP_Error( 'wpbp_bad_state', __( 'Backup job state is incomplete.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_bad_state', __( 'Backup job state is incomplete.', 'backup-pilot' ) );
 		}
 
 		switch ( $state['phase'] ) {
@@ -177,7 +177,7 @@ class WPBP_Backup_Manager {
 				return $this->process_archive_chunk( $state );
 		}
 
-		return new WP_Error( 'wpbp_bad_phase', __( 'Backup job phase is invalid.', 'wp-backup-pilot' ) );
+		return new WP_Error( 'wpbp_bad_phase', __( 'Backup job phase is invalid.', 'backup-pilot' ) );
 	}
 
 	/**
@@ -223,10 +223,10 @@ class WPBP_Backup_Manager {
 	 */
 	public function profiles() {
 		return array(
-			'full'     => __( 'Full Site', 'wp-backup-pilot' ),
-			'database' => __( 'Database Only', 'wp-backup-pilot' ),
-			'uploads'  => __( 'Uploads Only', 'wp-backup-pilot' ),
-			'files'    => __( 'Files Only', 'wp-backup-pilot' ),
+			'full'     => __( 'Full Site', 'backup-pilot' ),
+			'database' => __( 'Database Only', 'backup-pilot' ),
+			'uploads'  => __( 'Uploads Only', 'backup-pilot' ),
+			'files'    => __( 'Files Only', 'backup-pilot' ),
 		);
 	}
 
@@ -276,7 +276,7 @@ class WPBP_Backup_Manager {
 		$path     = trailingslashit( $paths['backups'] ) . $filename;
 
 		if ( ! preg_match( '/\.zip$/i', $filename ) || ! is_readable( $path ) ) {
-			return new WP_Error( 'wpbp_backup_not_found', __( 'Backup package not found.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_backup_not_found', __( 'Backup package not found.', 'backup-pilot' ) );
 		}
 
 		return $path;
@@ -294,7 +294,7 @@ class WPBP_Backup_Manager {
 			return $path;
 		}
 
-		return @unlink( $path ) ? true : new WP_Error( 'wpbp_delete_failed', __( 'Could not delete the backup package.', 'wp-backup-pilot' ) );
+		return WPBP_Filesystem::delete_file( $path ) ? true : new WP_Error( 'wpbp_delete_failed', __( 'Could not delete the backup package.', 'backup-pilot' ) );
 	}
 
 	/**
@@ -305,27 +305,45 @@ class WPBP_Backup_Manager {
 	 */
 	public function import_upload( array $file ) {
 		if ( empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
-			return new WP_Error( 'wpbp_upload_missing', __( 'No uploaded backup package was received.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_upload_missing', __( 'No uploaded backup package was received.', 'backup-pilot' ) );
+		}
+
+		$name = sanitize_file_name( $file['name'] );
+		if ( ! preg_match( '/\.zip$/i', $name ) ) {
+			return new WP_Error( 'wpbp_upload_type', __( 'Please upload a ZIP backup package.', 'backup-pilot' ) );
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		$upload = wp_handle_upload(
+			$file,
+			array(
+				'test_form' => false,
+				'mimes'     => array(
+					'zip' => 'application/zip',
+				),
+			)
+		);
+
+		if ( isset( $upload['error'] ) ) {
+			return new WP_Error( 'wpbp_upload_move_failed', $upload['error'] );
 		}
 
 		WPBP_Filesystem::ensure_storage();
 		$paths    = WPBP_Filesystem::paths();
-		$name     = sanitize_file_name( $file['name'] );
 		$filename = 'imported-' . gmdate( 'Ymd-His' ) . '-' . $name;
 		$target   = trailingslashit( $paths['backups'] ) . $filename;
+		$moved    = $this->move_uploaded_package( $upload['file'], $target );
 
-		if ( ! preg_match( '/\.zip$/i', $name ) ) {
-			return new WP_Error( 'wpbp_upload_type', __( 'Please upload a ZIP backup package.', 'wp-backup-pilot' ) );
-		}
-
-		if ( ! move_uploaded_file( $file['tmp_name'], $target ) ) {
-			return new WP_Error( 'wpbp_upload_move_failed', __( 'Could not store the uploaded package.', 'wp-backup-pilot' ) );
+		if ( ! $moved ) {
+			wp_delete_file( $upload['file'] );
+			return new WP_Error( 'wpbp_upload_move_failed', __( 'Could not store the uploaded package.', 'backup-pilot' ) );
 		}
 
 		$archive = new WPBP_Archive();
 		$inspect = $archive->inspect( $target );
 		if ( is_wp_error( $inspect ) ) {
-			@unlink( $target );
+			WPBP_Filesystem::delete_file( $target );
 			return $inspect;
 		}
 
@@ -334,6 +352,22 @@ class WPBP_Backup_Manager {
 			'path'     => $target,
 			'manifest' => $inspect['manifest'],
 		);
+	}
+
+	/**
+	 * Move an uploaded file into backup storage.
+	 *
+	 * @param string $source Uploaded file path.
+	 * @param string $destination Backup storage path.
+	 * @return bool
+	 */
+	private function move_uploaded_package( $source, $destination ) {
+		$wp_filesystem = WPBP_Filesystem::wp_filesystem();
+		if ( $wp_filesystem ) {
+			return $wp_filesystem->move( $source, $destination, true );
+		}
+
+		return false;
 	}
 
 	/**
@@ -431,12 +465,12 @@ class WPBP_Backup_Manager {
 	 */
 	private function process_file_chunk( array $state ) {
 		if ( empty( $state['file_list'] ) || ! is_readable( $state['file_list'] ) ) {
-			return new WP_Error( 'wpbp_file_list_missing', __( 'Backup file list could not be read.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_file_list_missing', __( 'Backup file list could not be read.', 'backup-pilot' ) );
 		}
 
 		$list = json_decode( file_get_contents( $state['file_list'] ), true );
 		if ( ! is_array( $list ) ) {
-			return new WP_Error( 'wpbp_file_list_missing', __( 'Backup file list could not be read.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_file_list_missing', __( 'Backup file list could not be read.', 'backup-pilot' ) );
 		}
 
 		$index = isset( $state['file_index'] ) ? (int) $state['file_index'] : 0;
@@ -488,7 +522,7 @@ class WPBP_Backup_Manager {
 		$manifest = $this->manifest( $db_info, $file_info, $state['sql_file'], $state['context'], $state['profile'], $state['includes'] );
 		$written  = file_put_contents( trailingslashit( $state['work_dir'] ) . 'manifest.json', wp_json_encode( $manifest, JSON_PRETTY_PRINT ) );
 		if ( false === $written ) {
-			return new WP_Error( 'wpbp_manifest_write_failed', __( 'Could not write the backup manifest.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_manifest_write_failed', __( 'Could not write the backup manifest.', 'backup-pilot' ) );
 		}
 
 		$state['manifest'] = $manifest;
@@ -507,13 +541,13 @@ class WPBP_Backup_Manager {
 
 		if ( empty( $state['zip_file_list'] ) ) {
 			if ( ! empty( $state['file_list'] ) && file_exists( $state['file_list'] ) ) {
-				@unlink( $state['file_list'] );
+				WPBP_Filesystem::delete_file( $state['file_list'] );
 			}
 
 			$zip_files = $archive->build_zip_file_list( $state['work_dir'] );
 			$zip_list  = trailingslashit( $state['work_dir'] ) . 'zip-list.json';
 			if ( false === file_put_contents( $zip_list, wp_json_encode( $zip_files ) ) ) {
-				return new WP_Error( 'wpbp_zip_list_write_failed', __( 'Could not write archive file list.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_zip_list_write_failed', __( 'Could not write archive file list.', 'backup-pilot' ) );
 			}
 
 			$state['zip_file_list'] = $zip_list;
@@ -523,7 +557,7 @@ class WPBP_Backup_Manager {
 
 		$zip_files = json_decode( file_get_contents( $state['zip_file_list'] ), true );
 		if ( ! is_array( $zip_files ) ) {
-			return new WP_Error( 'wpbp_zip_list_missing', __( 'Archive file list could not be read.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_zip_list_missing', __( 'Archive file list could not be read.', 'backup-pilot' ) );
 		}
 
 		$result = $archive->add_zip_chunk( $state['zip_path'], $zip_files, (int) $state['zip_index'] );
@@ -628,12 +662,12 @@ class WPBP_Backup_Manager {
 	 */
 	private function phase_label( $phase ) {
 		$labels = array(
-			'queued'   => __( 'Queued', 'wp-backup-pilot' ),
-			'database' => __( 'Exporting database', 'wp-backup-pilot' ),
-			'files'    => __( 'Copying files', 'wp-backup-pilot' ),
-			'manifest' => __( 'Writing manifest', 'wp-backup-pilot' ),
-			'archive'  => __( 'Creating archive', 'wp-backup-pilot' ),
-			'complete' => __( 'Complete', 'wp-backup-pilot' ),
+			'queued'   => __( 'Queued', 'backup-pilot' ),
+			'database' => __( 'Exporting database', 'backup-pilot' ),
+			'files'    => __( 'Copying files', 'backup-pilot' ),
+			'manifest' => __( 'Writing manifest', 'backup-pilot' ),
+			'archive'  => __( 'Creating archive', 'backup-pilot' ),
+			'complete' => __( 'Complete', 'backup-pilot' ),
 		);
 
 		return isset( $labels[ $phase ] ) ? $labels[ $phase ] : $phase;
@@ -699,8 +733,8 @@ class WPBP_Backup_Manager {
 		global $wpdb, $wp_version;
 
 		return array(
-			'plugin'       => 'WP Backup Pilot',
-			'plugin_slug'  => 'wp-backup-pilot',
+			'plugin'       => 'Backup Pilot',
+			'plugin_slug'  => 'backup-pilot',
 			'version'      => WPBP_VERSION,
 			'context'      => $context,
 			'profile'      => $profile,

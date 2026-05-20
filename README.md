@@ -1,14 +1,14 @@
-# WP Backup Pilot
+# Backup Pilot
 
-WP Backup Pilot is a free, GPL-licensed WordPress plugin by **Yousef Amer** for creating, validating, restoring, and migrating full-site backups from the WordPress admin.
+Backup Pilot is a free, GPL-licensed WordPress plugin by **Yousef Amer** for creating, validating, restoring, and migrating full-site backups from the WordPress admin.
 
 The project is built as a public engineering case study for serious WordPress plugin development: safe restore workflows, chunked background jobs, package validation, checksums, rollback preparation, retention, and S3-compatible storage without locking the core value behind a paid tier.
 
 ## Current Status
 
-WP Backup Pilot is an MVP intended for local testing, portfolio review, and open-source hardening before WordPress.org submission.
+Backup Pilot is an MVP intended for local testing, portfolio review, and open-source hardening before WordPress.org submission.
 
-- GitHub repository target: `yousefamer/wp-backup-pilot`
+- GitHub repository target: `yousefamer/backup-pilot`
 - License: `GPL-2.0-or-later`
 - Minimum WordPress: `6.0`
 - Minimum PHP: `7.4`
@@ -40,9 +40,9 @@ Add these assets before the public launch:
 
 ## Installation
 
-1. Copy the plugin folder to `wp-content/plugins/wp-backup-pilot`.
-2. Activate **WP Backup Pilot** from **Plugins** in WordPress admin.
-3. Open **Tools > WP Backup Pilot**.
+1. Copy the plugin folder to `wp-content/plugins/backup-pilot`.
+2. Activate **Backup Pilot** from **Plugins** in WordPress admin.
+3. Open **Tools > Backup Pilot**.
 4. Create a backup, download it, or validate a package before restoring.
 
 For production sites, test restore workflows on a disposable clone before trusting any backup tool with live data.
@@ -81,7 +81,7 @@ composer phpcs
 
 ## Architecture
 
-WP Backup Pilot is intentionally class-based and separated into focused components:
+Backup Pilot is intentionally class-based and separated into focused components:
 
 - **Admin controller**: WordPress admin page, actions, notices, settings, uploads, and restore confirmation screens.
 - **Backup manager**: Coordinates backup package creation, manifests, cleanup, and backup history.
@@ -130,11 +130,11 @@ backup.zip
 
 ## Built By Yousef Amer
 
-WP Backup Pilot is a creator-led open-source project by **Yousef Amer**, built to demonstrate senior WordPress plugin engineering through a real operational tool.
+Backup Pilot is a creator-led open-source project by **Yousef Amer**, built to demonstrate senior WordPress plugin engineering through a real operational tool.
 
 - GitHub: https://github.com/joexamer
-- Portfolio: `https://your-portfolio.example`
-- LinkedIn: `https://linkedin.com/in/your-profile`
+- Portfolio: `https://yousefamer.com`
+- LinkedIn: `https://linkedin.com/in/yousefamer`
 
 CTA: Hire me for WordPress plugin development, migrations, restore tooling, maintenance automation, and custom integrations.
 
@@ -148,4 +148,4 @@ Backup and restore plugins touch sensitive files, database contents, credentials
 
 ## License
 
-WP Backup Pilot is licensed under `GPL-2.0-or-later`.
+Backup Pilot is licensed under `GPL-2.0-or-later`.

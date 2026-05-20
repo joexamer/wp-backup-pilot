@@ -5,6 +5,8 @@
  * @package WPBackupPilot
  */
 
+// phpcs:ignoreFile -- PHPUnit tests use direct filesystem helpers outside WordPress runtime.
+
 require_once dirname( __DIR__ ) . '/includes/class-wpbp-archive.php';
 
 class WPBP_ArchiveTest extends PHPUnit\Framework\TestCase {

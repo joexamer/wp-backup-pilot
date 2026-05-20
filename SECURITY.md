@@ -1,6 +1,6 @@
 # Security Policy
 
-WP Backup Pilot handles full-site backup archives, database SQL, filesystem restore operations, migration URL replacement, and optional remote storage credentials. Please report security issues responsibly.
+Backup Pilot handles full-site backup archives, database SQL, filesystem restore operations, migration URL replacement, and optional remote storage credentials. Please report security issues responsibly.
 
 ## Supported Versions
 
@@ -14,12 +14,12 @@ Please do not open a public issue for vulnerabilities.
 
 Preferred reporting options:
 
-- Use GitHub Security Advisories for `yousefamer/wp-backup-pilot`.
+- Use GitHub Security Advisories for `yousefamer/backup-pilot`.
 - Contact Yousef Amer through the portfolio contact form once the public portfolio link is live.
 
 Helpful details include:
 
-- Affected WP Backup Pilot version or commit.
+- Affected Backup Pilot version or commit.
 - WordPress and PHP versions.
 - Exact steps to reproduce.
 - Whether authentication is required.

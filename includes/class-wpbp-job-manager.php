@@ -50,12 +50,12 @@ class WPBP_Job_Manager {
 			'type'       => 'backup',
 			'profile'    => sanitize_key( $profile ),
 			'status'     => 'queued',
-			'message'    => __( 'Waiting to start.', 'wp-backup-pilot' ),
-			'logs'       => array( $this->log_entry( __( 'Backup job queued.', 'wp-backup-pilot' ) ) ),
+			'message'    => __( 'Waiting to start.', 'backup-pilot' ),
+			'logs'       => array( $this->log_entry( __( 'Backup job queued.', 'backup-pilot' ) ) ),
 			'progress'   => array(
 				'phase'   => 'queued',
 				'percent' => 0,
-				'label'   => __( 'Queued', 'wp-backup-pilot' ),
+				'label'   => __( 'Queued', 'backup-pilot' ),
 			),
 			'state'      => array(),
 			'created_at' => time(),
@@ -84,12 +84,12 @@ class WPBP_Job_Manager {
 			'id'         => 'job-' . gmdate( 'Ymd-His' ) . '-' . wp_generate_password( 6, false, false ),
 			'type'       => 'restore',
 			'status'     => 'queued',
-			'message'    => __( 'Waiting to start restore.', 'wp-backup-pilot' ),
-			'logs'       => array( $this->log_entry( __( 'Restore job queued.', 'wp-backup-pilot' ) ) ),
+			'message'    => __( 'Waiting to start restore.', 'backup-pilot' ),
+			'logs'       => array( $this->log_entry( __( 'Restore job queued.', 'backup-pilot' ) ) ),
 			'progress'   => array(
 				'phase'   => 'queued',
 				'percent' => 0,
-				'label'   => __( 'Queued', 'wp-backup-pilot' ),
+				'label'   => __( 'Queued', 'backup-pilot' ),
 			),
 			'state'      => array(),
 			'payload'    => array(
@@ -123,9 +123,9 @@ class WPBP_Job_Manager {
 		}
 
 		$jobs[ $job_id ]['status']     = 'running';
-		$jobs[ $job_id ]['message']    = __( 'Preparing backup job.', 'wp-backup-pilot' );
+		$jobs[ $job_id ]['message']    = __( 'Preparing backup job.', 'backup-pilot' );
 		$jobs[ $job_id ]['updated_at'] = time();
-		$this->append_log_to_job( $jobs[ $job_id ], __( 'Processing job chunk.', 'wp-backup-pilot' ) );
+		$this->append_log_to_job( $jobs[ $job_id ], __( 'Processing job chunk.', 'backup-pilot' ) );
 		$this->save( $jobs );
 
 		$state = $this->advance_job( $jobs[ $job_id ] );
@@ -138,11 +138,11 @@ class WPBP_Job_Manager {
 			$jobs[ $job_id ]['progress'] = array(
 				'phase'   => 'failed',
 				'percent' => 0,
-				'label'   => __( 'Failed', 'wp-backup-pilot' ),
+				'label'   => __( 'Failed', 'backup-pilot' ),
 			);
 		} elseif ( isset( $state['phase'] ) && 'complete' === $state['phase'] ) {
 			$jobs[ $job_id ]['status']  = 'completed';
-			$jobs[ $job_id ]['message'] = 'restore' === $jobs[ $job_id ]['type'] ? __( 'Restore completed successfully.', 'wp-backup-pilot' ) : __( 'Backup created successfully.', 'wp-backup-pilot' );
+			$jobs[ $job_id ]['message'] = 'restore' === $jobs[ $job_id ]['type'] ? __( 'Restore completed successfully.', 'backup-pilot' ) : __( 'Backup created successfully.', 'backup-pilot' );
 			$this->append_log_to_job( $jobs[ $job_id ], $jobs[ $job_id ]['message'], 'success' );
 			$jobs[ $job_id ]['progress'] = $this->progress_for_job( $jobs[ $job_id ], $state );
 			$jobs[ $job_id ]['result']   = isset( $state['result'] ) ? $state['result'] : array();
@@ -202,8 +202,8 @@ class WPBP_Job_Manager {
 
 		$this->cleanup_state( isset( $jobs[ $job_id ]['state'] ) ? $jobs[ $job_id ]['state'] : array() );
 		$jobs[ $job_id ]['status']  = 'cancelled';
-		$jobs[ $job_id ]['message'] = __( 'Job cancelled.', 'wp-backup-pilot' );
-		$this->append_log_to_job( $jobs[ $job_id ], __( 'Job cancelled by administrator.', 'wp-backup-pilot' ), 'warning' );
+		$jobs[ $job_id ]['message'] = __( 'Job cancelled.', 'backup-pilot' );
+		$this->append_log_to_job( $jobs[ $job_id ], __( 'Job cancelled by administrator.', 'backup-pilot' ), 'warning' );
 		$jobs[ $job_id ]['updated_at'] = time();
 		$this->save( $jobs );
 
@@ -286,7 +286,7 @@ class WPBP_Job_Manager {
 
 		if ( 'restore' === $job['type'] ) {
 			if ( ! $this->restore ) {
-				return new WP_Error( 'wpbp_restore_unavailable', __( 'Restore manager is unavailable.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_restore_unavailable', __( 'Restore manager is unavailable.', 'backup-pilot' ) );
 			}
 
 			if ( empty( $state ) ) {
@@ -347,14 +347,15 @@ class WPBP_Job_Manager {
 				$this->append_log_to_job( $job, $remote->get_error_message(), 'warning' );
 			} else {
 				$job['remote_uploaded'] = true;
-				$this->append_log_to_job( $job, __( 'Remote upload completed.', 'wp-backup-pilot' ), 'success' );
+				$this->append_log_to_job( $job, __( 'Remote upload completed.', 'backup-pilot' ), 'success' );
 			}
 		}
 
 		$deleted = ( new WPBP_Retention() )->apply();
 		if ( $deleted > 0 ) {
 			$job['retention_deleted'] = $deleted;
-			$this->append_log_to_job( $job, sprintf( __( 'Retention deleted %d old backup package(s).', 'wp-backup-pilot' ), $deleted ) );
+			/* translators: %d: number of deleted backup packages. */
+			$this->append_log_to_job( $job, sprintf( __( 'Retention deleted %d old backup package(s).', 'backup-pilot' ), $deleted ) );
 		}
 
 		if ( 'restore' === $job['type'] && ! empty( $job['result']['safety_backup'] ) ) {

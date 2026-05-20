@@ -24,12 +24,12 @@ class WPBP_Remote_Storage {
 
 		foreach ( array( 'remote_endpoint', 'remote_region', 'remote_bucket', 'remote_access_key', 'remote_secret_key' ) as $key ) {
 			if ( empty( $settings[ $key ] ) ) {
-				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage is enabled but S3 settings are incomplete.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage is enabled but S3 settings are incomplete.', 'backup-pilot' ) );
 			}
 		}
 
 		if ( ! is_readable( $path ) ) {
-			return new WP_Error( 'wpbp_remote_file_missing', __( 'Backup package is not readable for remote upload.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_remote_file_missing', __( 'Backup package is not readable for remote upload.', 'backup-pilot' ) );
 		}
 
 		$key    = trim( $settings['remote_prefix'], '/' ) . '/' . basename( $path );
@@ -39,7 +39,7 @@ class WPBP_Remote_Storage {
 		}
 
 		if ( ! empty( $settings['remote_delete_local'] ) ) {
-			@unlink( $path );
+			WPBP_Filesystem::delete_file( $path );
 		}
 
 		return true;
@@ -53,17 +53,17 @@ class WPBP_Remote_Storage {
 	public function test_connection() {
 		$settings = WPBP_Settings::get();
 		if ( empty( $settings['remote_enabled'] ) ) {
-			return new WP_Error( 'wpbp_remote_disabled', __( 'Remote storage is not enabled.', 'wp-backup-pilot' ) );
+			return new WP_Error( 'wpbp_remote_disabled', __( 'Remote storage is not enabled.', 'backup-pilot' ) );
 		}
 
 		foreach ( array( 'remote_endpoint', 'remote_region', 'remote_bucket', 'remote_access_key', 'remote_secret_key' ) as $key ) {
 			if ( empty( $settings[ $key ] ) ) {
-				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage settings are incomplete.', 'wp-backup-pilot' ) );
+				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage settings are incomplete.', 'backup-pilot' ) );
 			}
 		}
 
 		$key = trim( $settings['remote_prefix'], '/' ) . '/connection-test-' . gmdate( 'Ymd-His' ) . '.txt';
-		return $this->put_object( $settings, $key, 'WP Backup Pilot connection test ' . gmdate( 'c' ) );
+		return $this->put_object( $settings, $key, 'Backup Pilot connection test ' . gmdate( 'c' ) );
 	}
 
 	/**
@@ -126,7 +126,8 @@ class WPBP_Remote_Storage {
 		}
 
 		$code = wp_remote_retrieve_response_code( $response );
-		return $code >= 200 && $code < 300 ? true : new WP_Error( 'wpbp_remote_upload_failed', sprintf( __( 'Remote upload failed with HTTP %d.', 'wp-backup-pilot' ), $code ) );
+		/* translators: %d: HTTP response status code. */
+		return $code >= 200 && $code < 300 ? true : new WP_Error( 'wpbp_remote_upload_failed', sprintf( __( 'Remote upload failed with HTTP %d.', 'backup-pilot' ), $code ) );
 	}
 
 	/**

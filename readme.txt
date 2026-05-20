@@ -1,4 +1,4 @@
-=== WP Backup Pilot ===
+=== Backup Pilot ===
 Contributors: yousefamer
 Tags: backup, restore, migration, database backup, s3
 Requires at least: 6.0
@@ -12,7 +12,7 @@ Create, validate, restore, and migrate WordPress backup packages from the admin 
 
 == Description ==
 
-WP Backup Pilot is a free, open-source WordPress backup, restore, and migration plugin by Yousef Amer.
+Backup Pilot is a free, open-source WordPress backup, restore, and migration plugin by Yousef Amer.
 
 The plugin creates ZIP backup packages containing a manifest, database SQL export, and managed `wp-content` files. It includes staged restore validation, serialized-safe URL replacement for migrations, local backup history, retention controls, diagnostics, chunked job infrastructure, and optional S3-compatible remote storage.
 
@@ -31,10 +31,10 @@ This project is built as transparent operational tooling for WordPress administr
 
 == Installation ==
 
-1. Upload the `wp-backup-pilot` folder to `/wp-content/plugins/`.
-2. Activate **WP Backup Pilot** through the **Plugins** screen.
-3. Go to **Tools > WP Backup Pilot**.
-4. Create a backup or upload an existing WP Backup Pilot package for validation.
+1. Upload the `backup-pilot` folder to `/wp-content/plugins/`.
+2. Activate **Backup Pilot** through the **Plugins** screen.
+3. Go to **Tools > Backup Pilot**.
+4. Create a backup or upload an existing Backup Pilot package for validation.
 
 Always test restore operations on a disposable clone before using any backup plugin on a production site.
 
@@ -42,7 +42,7 @@ Always test restore operations on a disposable clone before using any backup plu
 
 = Is this plugin free? =
 
-Yes. WP Backup Pilot is licensed under GPLv2 or later.
+Yes. Backup Pilot is licensed under GPLv2 or later.
 
 = Does the plugin include WordPress core files? =
 
