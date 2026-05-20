@@ -1,0 +1,9 @@
+/vendor/
+/.phpunit.result.cache
+/coverage/
+/build/
+/dist/
+*.zip
+*.sql
+*.log
+.DS_Store

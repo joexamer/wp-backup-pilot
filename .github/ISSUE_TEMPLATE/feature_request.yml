@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an improvement for WP Backup Pilot.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What backup, restore, migration, reliability, or admin workflow problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority area
+      options:
+        - Reliability hardening
+        - WordPress.org submission
+        - Restore safety
+        - Remote storage
+        - Developer experience
+        - Admin UI
+        - Documentation
+        - Other
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context

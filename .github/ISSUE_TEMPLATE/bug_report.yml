@@ -1,0 +1,62 @@
+name: Bug report
+description: Report a reproducible WP Backup Pilot issue.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please do not include backup archives, database dumps, secrets, or access credentials.
+  - type: input
+    id: version
+    attributes:
+      label: WP Backup Pilot version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: WordPress and PHP versions
+      placeholder: "WordPress 6.9, PHP 8.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Backup creation
+        - Restore
+        - Migration URL replacement
+        - Upload/import
+        - Remote storage
+        - Settings
+        - Admin UI
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Use a disposable site when testing restore behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Redact paths, URLs, credentials, and private data.
