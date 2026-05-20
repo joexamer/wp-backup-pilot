@@ -51,10 +51,10 @@ class WPBP_Admin {
 	 */
 	public function register_menu() {
 		add_management_page(
-			__( 'Backup Pilot', 'backup-pilot' ),
-			__( 'Backup Pilot', 'backup-pilot' ),
+			__( 'Backup Pilot', 'backup-pilot-main' ),
+			__( 'Backup Pilot', 'backup-pilot-main' ),
 			'manage_options',
-			'backup-pilot',
+			'backup-pilot-main',
 			array( $this, 'render_page' )
 		);
 	}
@@ -66,7 +66,7 @@ class WPBP_Admin {
 	 */
 	public function render_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to manage backups.', 'backup-pilot' ) );
+			wp_die( esc_html__( 'You do not have permission to manage backups.', 'backup-pilot-main' ) );
 		}
 
 		WPBP_Filesystem::ensure_storage();
@@ -75,18 +75,18 @@ class WPBP_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only admin navigation; capability checked above.
 		$tab     = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'backups';
 		$tabs    = array(
-			'backups'     => __( 'Backups', 'backup-pilot' ),
-			'jobs'        => __( 'Jobs', 'backup-pilot' ),
-			'restore'     => __( 'Restore', 'backup-pilot' ),
-			'settings'    => __( 'Settings', 'backup-pilot' ),
-			'diagnostics' => __( 'Diagnostics', 'backup-pilot' ),
+			'backups'     => __( 'Backups', 'backup-pilot-main' ),
+			'jobs'        => __( 'Jobs', 'backup-pilot-main' ),
+			'restore'     => __( 'Restore', 'backup-pilot-main' ),
+			'settings'    => __( 'Settings', 'backup-pilot-main' ),
+			'diagnostics' => __( 'Diagnostics', 'backup-pilot-main' ),
 		);
 		if ( ! isset( $tabs[ $tab ] ) ) {
 			$tab = 'backups';
 		}
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Backup Pilot', 'backup-pilot' ); ?></h1>
+			<h1><?php esc_html_e( 'Backup Pilot', 'backup-pilot-main' ); ?></h1>
 			<?php $this->render_notice(); ?>
 			<nav class="nav-tab-wrapper" style="margin-bottom:16px;">
 				<?php foreach ( $tabs as $key => $label ) : ?>
@@ -95,7 +95,7 @@ class WPBP_Admin {
 					echo esc_url(
 						add_query_arg(
 							array(
-								'page' => 'backup-pilot',
+								'page' => 'backup-pilot-main',
 								'tab'  => $key,
 							),
 							admin_url( 'tools.php' )
@@ -107,19 +107,19 @@ class WPBP_Admin {
 			</nav>
 			<?php if ( 'backups' === $tab ) : ?>
 				<?php $this->render_backup_create_panel(); ?>
-				<h2><?php esc_html_e( 'Backup History', 'backup-pilot' ); ?></h2>
+				<h2><?php esc_html_e( 'Backup History', 'backup-pilot-main' ); ?></h2>
 				<?php $this->render_backup_table(); ?>
 			<?php elseif ( 'jobs' === $tab ) : ?>
-				<h2><?php esc_html_e( 'Background Jobs', 'backup-pilot' ); ?></h2>
+				<h2><?php esc_html_e( 'Background Jobs', 'backup-pilot-main' ); ?></h2>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-bottom:10px;">
 					<?php wp_nonce_field( 'wpbp_run_due_jobs' ); ?>
 					<input type="hidden" name="action" value="wpbp_run_due_jobs">
-					<?php submit_button( __( 'Run Queued Jobs Now', 'backup-pilot' ), 'secondary', 'submit', false ); ?>
+					<?php submit_button( __( 'Run Queued Jobs Now', 'backup-pilot-main' ), 'secondary', 'submit', false ); ?>
 				</form>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-bottom:10px;">
 					<?php wp_nonce_field( 'wpbp_cleanup_jobs' ); ?>
 					<input type="hidden" name="action" value="wpbp_cleanup_jobs">
-					<?php submit_button( __( 'Clear Failed, Cancelled, and Stale Jobs', 'backup-pilot' ), 'secondary', 'submit', false ); ?>
+					<?php submit_button( __( 'Clear Failed, Cancelled, and Stale Jobs', 'backup-pilot-main' ), 'secondary', 'submit', false ); ?>
 				</form>
 				<?php $this->render_jobs_table(); ?>
 			<?php elseif ( 'restore' === $tab ) : ?>
@@ -144,7 +144,7 @@ class WPBP_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in guard().
 		$profile = isset( $_POST['profile'] ) ? sanitize_key( wp_unslash( $_POST['profile'] ) ) : 'full';
 		$this->jobs->enqueue_backup( $profile );
-		$this->redirect( 'success', __( 'Backup job queued. It will run through WP-Cron, or you can run queued jobs now.', 'backup-pilot' ) );
+		$this->redirect( 'success', __( 'Backup job queued. It will run through WP-Cron, or you can run queued jobs now.', 'backup-pilot-main' ) );
 	}
 
 	/**
@@ -157,7 +157,7 @@ class WPBP_Admin {
 
 		$count = $this->jobs->run_due_jobs();
 		/* translators: %d: number of processed job chunks. */
-		$this->redirect( 'success', sprintf( _n( 'Processed %d job chunk.', 'Processed %d job chunks.', $count, 'backup-pilot' ), $count ) );
+		$this->redirect( 'success', sprintf( _n( 'Processed %d job chunk.', 'Processed %d job chunks.', $count, 'backup-pilot-main' ), $count ) );
 	}
 
 	/**
@@ -170,7 +170,7 @@ class WPBP_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in guard().
 		$job_id = isset( $_POST['job_id'] ) ? sanitize_text_field( wp_unslash( $_POST['job_id'] ) ) : '';
 		$this->jobs->cancel( $job_id );
-		$this->redirect( 'success', __( 'Job cancelled.', 'backup-pilot' ) );
+		$this->redirect( 'success', __( 'Job cancelled.', 'backup-pilot-main' ) );
 	}
 
 	/**
@@ -182,7 +182,7 @@ class WPBP_Admin {
 		$this->guard( 'wpbp_cleanup_jobs' );
 		$count = $this->jobs->cleanup_jobs();
 		/* translators: %d: number of cleaned up jobs. */
-		$this->redirect( 'success', sprintf( _n( 'Cleaned up %d job.', 'Cleaned up %d jobs.', $count, 'backup-pilot' ), $count ) );
+		$this->redirect( 'success', sprintf( _n( 'Cleaned up %d job.', 'Cleaned up %d jobs.', $count, 'backup-pilot-main' ), $count ) );
 	}
 
 	/**
@@ -195,7 +195,7 @@ class WPBP_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in guard().
 		WPBP_Settings::save( wp_unslash( $_POST ) );
 		WPBP_Scheduler::sync( true );
-		$this->redirect( 'success', __( 'Settings saved.', 'backup-pilot' ) );
+		$this->redirect( 'success', __( 'Settings saved.', 'backup-pilot-main' ) );
 	}
 
 	/**
@@ -210,7 +210,7 @@ class WPBP_Admin {
 			$this->redirect( 'error', $result->get_error_message(), 'settings' );
 		}
 
-		$this->redirect( 'success', __( 'Remote storage connection test succeeded.', 'backup-pilot' ), 'settings' );
+		$this->redirect( 'success', __( 'Remote storage connection test succeeded.', 'backup-pilot-main' ), 'settings' );
 	}
 
 	/**
@@ -222,7 +222,7 @@ class WPBP_Admin {
 		$this->guard( 'wpbp_rollback_restore' );
 		$backup = WPBP_Restore_History::latest_safety_backup();
 		if ( ! $backup ) {
-			$this->redirect( 'error', __( 'No rollback backup is available.', 'backup-pilot' ), 'restore' );
+			$this->redirect( 'error', __( 'No rollback backup is available.', 'backup-pilot-main' ), 'restore' );
 		}
 
 		$path = $this->backups->resolve_backup( $backup );
@@ -231,7 +231,7 @@ class WPBP_Admin {
 		}
 
 		$this->jobs->enqueue_restore( $backup, $path, false );
-		$this->redirect( 'success', __( 'Rollback restore job queued.', 'backup-pilot' ), 'restore' );
+		$this->redirect( 'success', __( 'Rollback restore job queued.', 'backup-pilot-main' ), 'restore' );
 	}
 
 	/**
@@ -245,7 +245,7 @@ class WPBP_Admin {
 		$token    = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
 		$filename = $token ? get_transient( 'wpbp_download_' . $token ) : '';
 		if ( ! $filename ) {
-			$this->redirect( 'error', __( 'The download link has expired. Please generate a new one from Backup History.', 'backup-pilot' ), 'backups' );
+			$this->redirect( 'error', __( 'The download link has expired. Please generate a new one from Backup History.', 'backup-pilot-main' ), 'backups' );
 		}
 		delete_transient( 'wpbp_download_' . $token );
 		$filename = sanitize_file_name( $filename );
@@ -279,7 +279,7 @@ class WPBP_Admin {
 			$this->redirect( 'error', $result->get_error_message() );
 		}
 
-		$this->redirect( 'success', __( 'Backup deleted.', 'backup-pilot' ) );
+		$this->redirect( 'success', __( 'Backup deleted.', 'backup-pilot-main' ) );
 	}
 
 	/**
@@ -300,10 +300,10 @@ class WPBP_Admin {
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'                 => 'backup-pilot',
+					'page'                 => 'backup-pilot-main',
 					'tab'                  => 'restore',
 					'wpbp_notice'          => 'success',
-					'wpbp_message'         => __( 'Package uploaded and validated.', 'backup-pilot' ),
+					'wpbp_message'         => __( 'Package uploaded and validated.', 'backup-pilot-main' ),
 					'wpbp_confirm_restore' => $result['filename'],
 				),
 				admin_url( 'tools.php' )
@@ -330,7 +330,7 @@ class WPBP_Admin {
 		}
 
 		$this->jobs->enqueue_restore( $filename, $path, $rewrite_urls );
-		$this->redirect( 'success', __( 'Restore job queued. A pre-restore safety backup will be created before changes are applied.', 'backup-pilot' ), 'jobs' );
+		$this->redirect( 'success', __( 'Restore job queued. A pre-restore safety backup will be created before changes are applied.', 'backup-pilot-main' ), 'jobs' );
 	}
 
 	/**
@@ -361,18 +361,18 @@ class WPBP_Admin {
 		?>
 		<div class="postbox" style="max-width:1100px;">
 			<div class="inside">
-				<h2><?php esc_html_e( 'Create Backup', 'backup-pilot' ); ?></h2>
-				<p><?php esc_html_e( 'Queue a local package using the selected backup profile.', 'backup-pilot' ); ?></p>
+				<h2><?php esc_html_e( 'Create Backup', 'backup-pilot-main' ); ?></h2>
+				<p><?php esc_html_e( 'Queue a local package using the selected backup profile.', 'backup-pilot-main' ); ?></p>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<?php wp_nonce_field( 'wpbp_create_backup' ); ?>
 					<input type="hidden" name="action" value="wpbp_create_backup">
-					<label for="wpbp-profile"><?php esc_html_e( 'Profile', 'backup-pilot' ); ?></label>
+					<label for="wpbp-profile"><?php esc_html_e( 'Profile', 'backup-pilot-main' ); ?></label>
 					<select id="wpbp-profile" name="profile">
 						<?php foreach ( $this->backups->profiles() as $profile_key => $profile_label ) : ?>
 							<option value="<?php echo esc_attr( $profile_key ); ?>"><?php echo esc_html( $profile_label ); ?></option>
 						<?php endforeach; ?>
 					</select>
-					<?php submit_button( __( 'Queue Backup', 'backup-pilot' ), 'primary', 'submit', false ); ?>
+					<?php submit_button( __( 'Queue Backup', 'backup-pilot-main' ), 'primary', 'submit', false ); ?>
 				</form>
 			</div>
 		</div>
@@ -395,38 +395,38 @@ class WPBP_Admin {
 		<div style="display:grid;grid-template-columns:minmax(280px,1fr) minmax(280px,1fr);gap:20px;max-width:1100px;">
 			<div class="postbox">
 				<div class="inside">
-					<h2><?php esc_html_e( 'Upload Package', 'backup-pilot' ); ?></h2>
-					<p><?php esc_html_e( 'Upload a Backup Pilot ZIP package to validate it and prepare a staged restore.', 'backup-pilot' ); ?></p>
+					<h2><?php esc_html_e( 'Upload Package', 'backup-pilot-main' ); ?></h2>
+					<p><?php esc_html_e( 'Upload a Backup Pilot ZIP package to validate it and prepare a staged restore.', 'backup-pilot-main' ); ?></p>
 					<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'wpbp_upload_backup' ); ?>
 						<input type="hidden" name="action" value="wpbp_upload_backup">
 						<input type="file" name="backup_package" accept=".zip" required>
-						<?php submit_button( __( 'Upload Package', 'backup-pilot' ), 'secondary', 'submit', false ); ?>
+						<?php submit_button( __( 'Upload Package', 'backup-pilot-main' ), 'secondary', 'submit', false ); ?>
 					</form>
 				</div>
 			</div>
 			<div class="postbox">
 				<div class="inside">
-					<h2><?php esc_html_e( 'Rollback Last Restore', 'backup-pilot' ); ?></h2>
+					<h2><?php esc_html_e( 'Rollback Last Restore', 'backup-pilot-main' ); ?></h2>
 					<p>
 						<?php
 						if ( $rollback ) {
 							/* translators: %s: safety backup filename. */
-							echo esc_html( sprintf( __( 'Latest safety backup: %s', 'backup-pilot' ), $rollback ) );
+							echo esc_html( sprintf( __( 'Latest safety backup: %s', 'backup-pilot-main' ), $rollback ) );
 						} else {
-							esc_html_e( 'No restore safety backup is available yet.', 'backup-pilot' );
+							esc_html_e( 'No restore safety backup is available yet.', 'backup-pilot-main' );
 						}
 						?>
 					</p>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 						<?php wp_nonce_field( 'wpbp_rollback_restore' ); ?>
 						<input type="hidden" name="action" value="wpbp_rollback_restore">
-						<?php submit_button( __( 'Queue Rollback', 'backup-pilot' ), 'primary', 'submit', false, $rollback ? array() : array( 'disabled' => 'disabled' ) ); ?>
+						<?php submit_button( __( 'Queue Rollback', 'backup-pilot-main' ), 'primary', 'submit', false, $rollback ? array() : array( 'disabled' => 'disabled' ) ); ?>
 					</form>
 				</div>
 			</div>
 		</div>
-		<h2><?php esc_html_e( 'Restore History', 'backup-pilot' ); ?></h2>
+		<h2><?php esc_html_e( 'Restore History', 'backup-pilot-main' ); ?></h2>
 		<?php $this->render_restore_history(); ?>
 		<?php
 	}
@@ -439,19 +439,19 @@ class WPBP_Admin {
 	private function render_backup_table() {
 		$items = $this->backups->list_backups();
 		if ( empty( $items ) ) {
-			echo '<p>' . esc_html__( 'No backups have been created yet.', 'backup-pilot' ) . '</p>';
+			echo '<p>' . esc_html__( 'No backups have been created yet.', 'backup-pilot-main' ) . '</p>';
 			return;
 		}
 		?>
 		<table class="widefat striped">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Package', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Created', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Source URL', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Size', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Status', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Actions', 'backup-pilot' ); ?></th>
+					<th><?php esc_html_e( 'Package', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Created', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Source URL', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Size', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Actions', 'backup-pilot-main' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -461,16 +461,16 @@ class WPBP_Admin {
 					<td><?php echo esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $item['created'] ) ); ?></td>
 					<td><?php echo esc_html( isset( $item['manifest']['home_url'] ) ? $item['manifest']['home_url'] : '-' ); ?></td>
 					<td><?php echo esc_html( WPBP_Filesystem::format_bytes( $item['size'] ) ); ?></td>
-					<td><?php echo $item['valid'] ? esc_html__( 'Valid', 'backup-pilot' ) : esc_html( $item['error'] ); ?></td>
+					<td><?php echo $item['valid'] ? esc_html__( 'Valid', 'backup-pilot-main' ) : esc_html( $item['error'] ); ?></td>
 					<td>
-						<a class="button" href="<?php echo esc_url( $this->download_url( $item['filename'] ) ); ?>"><?php esc_html_e( 'Download', 'backup-pilot' ); ?></a>
+						<a class="button" href="<?php echo esc_url( $this->download_url( $item['filename'] ) ); ?>"><?php esc_html_e( 'Download', 'backup-pilot-main' ); ?></a>
 						<?php if ( $item['valid'] ) : ?>
 							<a class="button" href="
 							<?php
 							echo esc_url(
 								add_query_arg(
 									array(
-										'page' => 'backup-pilot',
+										'page' => 'backup-pilot-main',
 										'tab'  => 'restore',
 										'wpbp_confirm_restore' => $item['filename'],
 									),
@@ -478,13 +478,13 @@ class WPBP_Admin {
 								)
 							);
 							?>
-													"><?php esc_html_e( 'Restore', 'backup-pilot' ); ?></a>
+													"><?php esc_html_e( 'Restore', 'backup-pilot-main' ); ?></a>
 						<?php endif; ?>
 						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline;">
 							<?php wp_nonce_field( 'wpbp_delete_backup' ); ?>
 							<input type="hidden" name="action" value="wpbp_delete_backup">
 							<input type="hidden" name="backup" value="<?php echo esc_attr( $item['filename'] ); ?>">
-							<?php submit_button( __( 'Delete', 'backup-pilot' ), 'delete small', 'submit', false ); ?>
+							<?php submit_button( __( 'Delete', 'backup-pilot-main' ), 'delete small', 'submit', false ); ?>
 						</form>
 					</td>
 				</tr>
@@ -502,22 +502,22 @@ class WPBP_Admin {
 	private function render_jobs_table() {
 		$jobs = $this->jobs->recent();
 		if ( empty( $jobs ) ) {
-			echo '<p>' . esc_html__( 'No background jobs yet.', 'backup-pilot' ) . '</p>';
+			echo '<p>' . esc_html__( 'No background jobs yet.', 'backup-pilot-main' ) . '</p>';
 			return;
 		}
 		?>
 		<table class="widefat striped" style="max-width:1100px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Type', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Profile', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Status', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Progress', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Message', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Created', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Result', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Actions', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Log', 'backup-pilot' ); ?></th>
+					<th><?php esc_html_e( 'Type', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Profile', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Progress', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Message', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Created', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Result', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Actions', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Log', 'backup-pilot-main' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -546,7 +546,7 @@ class WPBP_Admin {
 						} elseif ( ! empty( $job['result']['safety_backup'] ) ) {
 							echo '<code>' . esc_html( $job['result']['safety_backup'] ) . '</code>';
 						} else {
-							echo esc_html__( '-', 'backup-pilot' );
+							echo esc_html__( '-', 'backup-pilot-main' );
 						}
 						?>
 					</td>
@@ -556,16 +556,16 @@ class WPBP_Admin {
 								<?php wp_nonce_field( 'wpbp_cancel_job' ); ?>
 								<input type="hidden" name="action" value="wpbp_cancel_job">
 								<input type="hidden" name="job_id" value="<?php echo esc_attr( $job['id'] ); ?>">
-								<?php submit_button( __( 'Cancel', 'backup-pilot' ), 'delete small', 'submit', false ); ?>
+								<?php submit_button( __( 'Cancel', 'backup-pilot-main' ), 'delete small', 'submit', false ); ?>
 							</form>
 						<?php else : ?>
-							<?php esc_html_e( '-', 'backup-pilot' ); ?>
+							<?php esc_html_e( '-', 'backup-pilot-main' ); ?>
 						<?php endif; ?>
 					</td>
 					<td>
 						<?php if ( ! empty( $job['logs'] ) && is_array( $job['logs'] ) ) : ?>
 							<details>
-								<summary><?php esc_html_e( 'View', 'backup-pilot' ); ?></summary>
+								<summary><?php esc_html_e( 'View', 'backup-pilot-main' ); ?></summary>
 								<ul>
 									<?php foreach ( array_slice( $job['logs'], -8 ) as $log ) : ?>
 										<li><small><?php echo esc_html( wp_date( 'H:i:s', $log['time'] ) . ' [' . $log['level'] . '] ' . $log['message'] ); ?></small></li>
@@ -573,7 +573,7 @@ class WPBP_Admin {
 								</ul>
 							</details>
 						<?php else : ?>
-							<?php esc_html_e( '-', 'backup-pilot' ); ?>
+							<?php esc_html_e( '-', 'backup-pilot-main' ); ?>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -591,18 +591,18 @@ class WPBP_Admin {
 	private function render_restore_history() {
 		$history = WPBP_Restore_History::all();
 		if ( empty( $history ) ) {
-			echo '<p>' . esc_html__( 'No restores have completed yet.', 'backup-pilot' ) . '</p>';
+			echo '<p>' . esc_html__( 'No restores have completed yet.', 'backup-pilot-main' ) . '</p>';
 			return;
 		}
 		?>
 		<table class="widefat striped" style="max-width:1100px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Time', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Package', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Safety Backup', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'User', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Status', 'backup-pilot' ); ?></th>
+					<th><?php esc_html_e( 'Time', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Package', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Safety Backup', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'User', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'backup-pilot-main' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -633,21 +633,21 @@ class WPBP_Admin {
 			<input type="hidden" name="action" value="wpbp_save_settings">
 			<table class="form-table" role="presentation">
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Retention', 'backup-pilot' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Retention', 'backup-pilot-main' ); ?></th>
 					<td>
-						<label><?php esc_html_e( 'Keep normal backups', 'backup-pilot' ); ?> <input type="number" min="0" name="retention_count" value="<?php echo esc_attr( $settings['retention_count'] ); ?>" style="width:80px;"></label>
-						<label style="margin-left:12px;"><?php esc_html_e( 'Keep pre-restore backups', 'backup-pilot' ); ?> <input type="number" min="0" name="pre_restore_count" value="<?php echo esc_attr( $settings['pre_restore_count'] ); ?>" style="width:80px;"></label>
-						<label style="margin-left:12px;"><?php esc_html_e( 'Delete older than days', 'backup-pilot' ); ?> <input type="number" min="0" name="retention_days" value="<?php echo esc_attr( $settings['retention_days'] ); ?>" style="width:80px;"></label>
+						<label><?php esc_html_e( 'Keep normal backups', 'backup-pilot-main' ); ?> <input type="number" min="0" name="retention_count" value="<?php echo esc_attr( $settings['retention_count'] ); ?>" style="width:80px;"></label>
+						<label style="margin-left:12px;"><?php esc_html_e( 'Keep pre-restore backups', 'backup-pilot-main' ); ?> <input type="number" min="0" name="pre_restore_count" value="<?php echo esc_attr( $settings['pre_restore_count'] ); ?>" style="width:80px;"></label>
+						<label style="margin-left:12px;"><?php esc_html_e( 'Delete older than days', 'backup-pilot-main' ); ?> <input type="number" min="0" name="retention_days" value="<?php echo esc_attr( $settings['retention_days'] ); ?>" style="width:80px;"></label>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Schedule', 'backup-pilot' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Schedule', 'backup-pilot-main' ); ?></th>
 					<td>
-						<label><input type="checkbox" name="schedule_enabled" value="1" <?php checked( $settings['schedule_enabled'] ); ?>> <?php esc_html_e( 'Enable scheduled backups', 'backup-pilot' ); ?></label>
+						<label><input type="checkbox" name="schedule_enabled" value="1" <?php checked( $settings['schedule_enabled'] ); ?>> <?php esc_html_e( 'Enable scheduled backups', 'backup-pilot-main' ); ?></label>
 						<select name="schedule_interval">
-							<option value="daily" <?php selected( $settings['schedule_interval'], 'daily' ); ?>><?php esc_html_e( 'Daily', 'backup-pilot' ); ?></option>
-							<option value="weekly" <?php selected( $settings['schedule_interval'], 'weekly' ); ?>><?php esc_html_e( 'Weekly', 'backup-pilot' ); ?></option>
-							<option value="monthly" <?php selected( $settings['schedule_interval'], 'monthly' ); ?>><?php esc_html_e( 'Monthly', 'backup-pilot' ); ?></option>
+							<option value="daily" <?php selected( $settings['schedule_interval'], 'daily' ); ?>><?php esc_html_e( 'Daily', 'backup-pilot-main' ); ?></option>
+							<option value="weekly" <?php selected( $settings['schedule_interval'], 'weekly' ); ?>><?php esc_html_e( 'Weekly', 'backup-pilot-main' ); ?></option>
+							<option value="monthly" <?php selected( $settings['schedule_interval'], 'monthly' ); ?>><?php esc_html_e( 'Monthly', 'backup-pilot-main' ); ?></option>
 						</select>
 						<select name="schedule_profile">
 							<?php foreach ( $this->backups->profiles() as $profile_key => $profile_label ) : ?>
@@ -659,42 +659,42 @@ class WPBP_Admin {
 							<?php
 							if ( $next ) {
 								/* translators: %s: formatted date and time. */
-								echo esc_html( sprintf( __( 'Next scheduled run: %s', 'backup-pilot' ), wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next ) ) );
+								echo esc_html( sprintf( __( 'Next scheduled run: %s', 'backup-pilot-main' ), wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next ) ) );
 							} else {
-								esc_html_e( 'No scheduled backup is currently registered.', 'backup-pilot' );
+								esc_html_e( 'No scheduled backup is currently registered.', 'backup-pilot-main' );
 							}
 							?>
 						</p>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'S3-Compatible Storage', 'backup-pilot' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'S3-Compatible Storage', 'backup-pilot-main' ); ?></th>
 					<td>
-						<p><label><input type="checkbox" name="remote_enabled" value="1" <?php checked( $settings['remote_enabled'] ); ?>> <?php esc_html_e( 'Upload completed backups to S3-compatible storage', 'backup-pilot' ); ?></label></p>
-						<p><input type="url" name="remote_endpoint" value="<?php echo esc_attr( $settings['remote_endpoint'] ); ?>" placeholder="https://s3.amazonaws.com" class="regular-text"> <?php esc_html_e( 'Endpoint', 'backup-pilot' ); ?></p>
-						<p><input type="text" name="remote_region" value="<?php echo esc_attr( $settings['remote_region'] ); ?>" placeholder="us-east-1"> <?php esc_html_e( 'Region', 'backup-pilot' ); ?></p>
-						<p><input type="text" name="remote_bucket" value="<?php echo esc_attr( $settings['remote_bucket'] ); ?>" placeholder="bucket-name"> <?php esc_html_e( 'Bucket', 'backup-pilot' ); ?></p>
-						<p><input type="text" name="remote_access_key" value="<?php echo esc_attr( $settings['remote_access_key'] ); ?>" class="regular-text"> <?php esc_html_e( 'Access key', 'backup-pilot' ); ?></p>
-						<p><input type="password" name="remote_secret_key" value="<?php echo esc_attr( $settings['remote_secret_key'] ); ?>" class="regular-text"> <?php esc_html_e( 'Secret key', 'backup-pilot' ); ?></p>
-						<p><input type="text" name="remote_prefix" value="<?php echo esc_attr( $settings['remote_prefix'] ); ?>" class="regular-text"> <?php esc_html_e( 'Object prefix', 'backup-pilot' ); ?></p>
-						<p><label><input type="checkbox" name="remote_path_style" value="1" <?php checked( $settings['remote_path_style'] ); ?>> <?php esc_html_e( 'Use path-style URLs', 'backup-pilot' ); ?></label></p>
-						<p><label><input type="checkbox" name="remote_delete_local" value="1" <?php checked( $settings['remote_delete_local'] ); ?>> <?php esc_html_e( 'Delete local package after successful upload', 'backup-pilot' ); ?></label></p>
+						<p><label><input type="checkbox" name="remote_enabled" value="1" <?php checked( $settings['remote_enabled'] ); ?>> <?php esc_html_e( 'Upload completed backups to S3-compatible storage', 'backup-pilot-main' ); ?></label></p>
+						<p><input type="url" name="remote_endpoint" value="<?php echo esc_attr( $settings['remote_endpoint'] ); ?>" placeholder="https://s3.amazonaws.com" class="regular-text"> <?php esc_html_e( 'Endpoint', 'backup-pilot-main' ); ?></p>
+						<p><input type="text" name="remote_region" value="<?php echo esc_attr( $settings['remote_region'] ); ?>" placeholder="us-east-1"> <?php esc_html_e( 'Region', 'backup-pilot-main' ); ?></p>
+						<p><input type="text" name="remote_bucket" value="<?php echo esc_attr( $settings['remote_bucket'] ); ?>" placeholder="bucket-name"> <?php esc_html_e( 'Bucket', 'backup-pilot-main' ); ?></p>
+						<p><input type="text" name="remote_access_key" value="<?php echo esc_attr( $settings['remote_access_key'] ); ?>" class="regular-text"> <?php esc_html_e( 'Access key', 'backup-pilot-main' ); ?></p>
+						<p><input type="password" name="remote_secret_key" value="<?php echo esc_attr( $settings['remote_secret_key'] ); ?>" class="regular-text"> <?php esc_html_e( 'Secret key', 'backup-pilot-main' ); ?></p>
+						<p><input type="text" name="remote_prefix" value="<?php echo esc_attr( $settings['remote_prefix'] ); ?>" class="regular-text"> <?php esc_html_e( 'Object prefix', 'backup-pilot-main' ); ?></p>
+						<p><label><input type="checkbox" name="remote_path_style" value="1" <?php checked( $settings['remote_path_style'] ); ?>> <?php esc_html_e( 'Use path-style URLs', 'backup-pilot-main' ); ?></label></p>
+						<p><label><input type="checkbox" name="remote_delete_local" value="1" <?php checked( $settings['remote_delete_local'] ); ?>> <?php esc_html_e( 'Delete local package after successful upload', 'backup-pilot-main' ); ?></label></p>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Package Encryption', 'backup-pilot' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Package Encryption', 'backup-pilot-main' ); ?></th>
 					<td>
 						<input type="password" name="encryption_password" value="<?php echo esc_attr( $settings['encryption_password'] ); ?>" class="regular-text">
-						<p class="description"><?php esc_html_e( 'Optional ZIP password. Encrypted backups require the same password before restore.', 'backup-pilot' ); ?></p>
+						<p class="description"><?php esc_html_e( 'Optional ZIP password. Encrypted backups require the same password before restore.', 'backup-pilot-main' ); ?></p>
 					</td>
 				</tr>
 			</table>
-			<?php submit_button( __( 'Save Settings', 'backup-pilot' ) ); ?>
+			<?php submit_button( __( 'Save Settings', 'backup-pilot-main' ) ); ?>
 		</form>
 		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="max-width:1100px;margin-top:8px;">
 			<?php wp_nonce_field( 'wpbp_test_remote' ); ?>
 			<input type="hidden" name="action" value="wpbp_test_remote">
-			<?php submit_button( __( 'Test Remote Storage', 'backup-pilot' ), 'secondary', 'submit', false ); ?>
+			<?php submit_button( __( 'Test Remote Storage', 'backup-pilot-main' ), 'secondary', 'submit', false ); ?>
 		</form>
 		<?php
 	}
@@ -709,9 +709,9 @@ class WPBP_Admin {
 		<table class="widefat striped" style="max-width:1100px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Check', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Status', 'backup-pilot' ); ?></th>
-					<th><?php esc_html_e( 'Detail', 'backup-pilot' ); ?></th>
+					<th><?php esc_html_e( 'Check', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'backup-pilot-main' ); ?></th>
+					<th><?php esc_html_e( 'Detail', 'backup-pilot-main' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -724,8 +724,8 @@ class WPBP_Admin {
 				<?php endforeach; ?>
 			</tbody>
 		</table>
-		<h2><?php esc_html_e( 'Suggested Test Matrix', 'backup-pilot' ); ?></h2>
-		<p><?php esc_html_e( 'Before production release, test fresh installs, content-heavy installs, WooCommerce/page-builder data, PHP 7.4 through current PHP, Apache/Nginx, shared hosting, VPS, and each enabled object-storage provider.', 'backup-pilot' ); ?></p>
+		<h2><?php esc_html_e( 'Suggested Test Matrix', 'backup-pilot-main' ); ?></h2>
+		<p><?php esc_html_e( 'Before production release, test fresh installs, content-heavy installs, WooCommerce/page-builder data, PHP 7.4 through current PHP, Apache/Nginx, shared hosting, VPS, and each enabled object-storage provider.', 'backup-pilot-main' ); ?></p>
 		<?php
 	}
 
@@ -754,15 +754,15 @@ class WPBP_Admin {
 		$differs    = $source_url && $source_url !== $current;
 		?>
 		<div class="notice notice-warning">
-			<h2><?php esc_html_e( 'Confirm Restore', 'backup-pilot' ); ?></h2>
-			<p><strong><?php esc_html_e( 'This will replace this site database and managed wp-content folders.', 'backup-pilot' ); ?></strong></p>
+			<h2><?php esc_html_e( 'Confirm Restore', 'backup-pilot-main' ); ?></h2>
+			<p><strong><?php esc_html_e( 'This will replace this site database and managed wp-content folders.', 'backup-pilot-main' ); ?></strong></p>
 			<ul>
-				<li><?php esc_html_e( 'Package:', 'backup-pilot' ); ?> <code><?php echo esc_html( $filename ); ?></code></li>
-				<li><?php esc_html_e( 'Created:', 'backup-pilot' ); ?> <?php echo esc_html( isset( $manifest['created_at'] ) ? $manifest['created_at'] : '-' ); ?></li>
-				<li><?php esc_html_e( 'Source URL:', 'backup-pilot' ); ?> <?php echo esc_html( $source_url ? $source_url : '-' ); ?></li>
-				<li><?php esc_html_e( 'Current URL:', 'backup-pilot' ); ?> <?php echo esc_html( $current ); ?></li>
-				<li><?php esc_html_e( 'Tables:', 'backup-pilot' ); ?> <?php echo esc_html( isset( $manifest['database']['count'] ) ? $manifest['database']['count'] : '-' ); ?></li>
-				<li><?php esc_html_e( 'Files:', 'backup-pilot' ); ?> <?php echo esc_html( isset( $manifest['files']['files'] ) ? $manifest['files']['files'] : '-' ); ?></li>
+				<li><?php esc_html_e( 'Package:', 'backup-pilot-main' ); ?> <code><?php echo esc_html( $filename ); ?></code></li>
+				<li><?php esc_html_e( 'Created:', 'backup-pilot-main' ); ?> <?php echo esc_html( isset( $manifest['created_at'] ) ? $manifest['created_at'] : '-' ); ?></li>
+				<li><?php esc_html_e( 'Source URL:', 'backup-pilot-main' ); ?> <?php echo esc_html( $source_url ? $source_url : '-' ); ?></li>
+				<li><?php esc_html_e( 'Current URL:', 'backup-pilot-main' ); ?> <?php echo esc_html( $current ); ?></li>
+				<li><?php esc_html_e( 'Tables:', 'backup-pilot-main' ); ?> <?php echo esc_html( isset( $manifest['database']['count'] ) ? $manifest['database']['count'] : '-' ); ?></li>
+				<li><?php esc_html_e( 'Files:', 'backup-pilot-main' ); ?> <?php echo esc_html( isset( $manifest['files']['files'] ) ? $manifest['files']['files'] : '-' ); ?></li>
 			</ul>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<?php wp_nonce_field( 'wpbp_restore_backup' ); ?>
@@ -773,11 +773,11 @@ class WPBP_Admin {
 						<input type="checkbox" name="rewrite_urls" value="1" checked>
 						<?php
 						/* translators: 1: source URL, 2: current site URL. */
-						echo esc_html( sprintf( __( 'Replace %1$s with %2$s in the database.', 'backup-pilot' ), $source_url, $current ) );
+						echo esc_html( sprintf( __( 'Replace %1$s with %2$s in the database.', 'backup-pilot-main' ), $source_url, $current ) );
 						?>
 					</label>
 				<?php endif; ?>
-				<p><?php submit_button( __( 'Restore This Backup', 'backup-pilot' ), 'primary', 'submit', false ); ?></p>
+				<p><?php submit_button( __( 'Restore This Backup', 'backup-pilot-main' ), 'primary', 'submit', false ); ?></p>
 			</form>
 		</div>
 		<?php
@@ -813,7 +813,7 @@ class WPBP_Admin {
 	 */
 	private function guard( $nonce_action ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have permission to manage backups.', 'backup-pilot' ) );
+			wp_die( esc_html__( 'You do not have permission to manage backups.', 'backup-pilot-main' ) );
 		}
 
 		check_admin_referer( $nonce_action );
@@ -828,7 +828,7 @@ class WPBP_Admin {
 	 */
 	private function redirect( $type, $message, $tab = '' ) {
 		$args = array(
-			'page'         => 'backup-pilot',
+			'page'         => 'backup-pilot-main',
 			'wpbp_notice'  => $type,
 			'wpbp_message' => $message,
 		);

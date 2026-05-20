@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WPBP_Filesystem {
-	const STORAGE_DIR = 'backup-pilot';
+	const STORAGE_DIR = 'backup-pilot-main';
 
 	/**
 	 * Initialize the WordPress filesystem API.
@@ -145,7 +145,7 @@ class WPBP_Filesystem {
 			return $base;
 		}
 
-		return new WP_Error( 'wpbp_work_dir_failed', __( 'Could not create a temporary working directory.', 'backup-pilot' ) );
+		return new WP_Error( 'wpbp_work_dir_failed', __( 'Could not create a temporary working directory.', 'backup-pilot-main' ) );
 	}
 
 	/**

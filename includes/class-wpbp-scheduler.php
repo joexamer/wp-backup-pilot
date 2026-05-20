@@ -51,11 +51,11 @@ class WPBP_Scheduler {
 	public static function schedules( array $schedules ) {
 		$schedules['weekly']       = array(
 			'interval' => WEEK_IN_SECONDS,
-			'display'  => __( 'Once Weekly', 'backup-pilot' ),
+			'display'  => __( 'Once Weekly', 'backup-pilot-main' ),
 		);
 		$schedules['wpbp_monthly'] = array(
 			'interval' => 30 * DAY_IN_SECONDS,
-			'display'  => __( 'Once Monthly', 'backup-pilot' ),
+			'display'  => __( 'Once Monthly', 'backup-pilot-main' ),
 		);
 
 		return $schedules;

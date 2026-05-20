@@ -24,12 +24,12 @@ class WPBP_Remote_Storage {
 
 		foreach ( array( 'remote_endpoint', 'remote_region', 'remote_bucket', 'remote_access_key', 'remote_secret_key' ) as $key ) {
 			if ( empty( $settings[ $key ] ) ) {
-				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage is enabled but S3 settings are incomplete.', 'backup-pilot' ) );
+				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage is enabled but S3 settings are incomplete.', 'backup-pilot-main' ) );
 			}
 		}
 
 		if ( ! is_readable( $path ) ) {
-			return new WP_Error( 'wpbp_remote_file_missing', __( 'Backup package is not readable for remote upload.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_remote_file_missing', __( 'Backup package is not readable for remote upload.', 'backup-pilot-main' ) );
 		}
 
 		$key    = trim( $settings['remote_prefix'], '/' ) . '/' . basename( $path );
@@ -53,12 +53,12 @@ class WPBP_Remote_Storage {
 	public function test_connection() {
 		$settings = WPBP_Settings::get();
 		if ( empty( $settings['remote_enabled'] ) ) {
-			return new WP_Error( 'wpbp_remote_disabled', __( 'Remote storage is not enabled.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_remote_disabled', __( 'Remote storage is not enabled.', 'backup-pilot-main' ) );
 		}
 
 		foreach ( array( 'remote_endpoint', 'remote_region', 'remote_bucket', 'remote_access_key', 'remote_secret_key' ) as $key ) {
 			if ( empty( $settings[ $key ] ) ) {
-				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage settings are incomplete.', 'backup-pilot' ) );
+				return new WP_Error( 'wpbp_remote_incomplete', __( 'Remote storage settings are incomplete.', 'backup-pilot-main' ) );
 			}
 		}
 
@@ -127,7 +127,7 @@ class WPBP_Remote_Storage {
 
 		$code = wp_remote_retrieve_response_code( $response );
 		/* translators: %d: HTTP response status code. */
-		return $code >= 200 && $code < 300 ? true : new WP_Error( 'wpbp_remote_upload_failed', sprintf( __( 'Remote upload failed with HTTP %d.', 'backup-pilot' ), $code ) );
+		return $code >= 200 && $code < 300 ? true : new WP_Error( 'wpbp_remote_upload_failed', sprintf( __( 'Remote upload failed with HTTP %d.', 'backup-pilot-main' ), $code ) );
 	}
 
 	/**

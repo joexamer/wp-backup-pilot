@@ -23,7 +23,7 @@ class WPBP_Database {
 	public function start_export( $file ) {
 		$handle = fopen( $file, 'wb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot-main' ) );
 		}
 
 		fwrite( $handle, "-- Backup Pilot database export\n" );
@@ -48,7 +48,7 @@ class WPBP_Database {
 
 		$handle = fopen( $file, 'ab' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot-main' ) );
 		}
 
 		if ( 0 === (int) $offset ) {
@@ -56,7 +56,7 @@ class WPBP_Database {
 			if ( empty( $create[1] ) ) {
 				fclose( $handle );
 				/* translators: %s: database table name. */
-				return new WP_Error( 'wpbp_sql_create_missing', sprintf( __( 'Could not read table structure for %s.', 'backup-pilot' ), $table ) );
+				return new WP_Error( 'wpbp_sql_create_missing', sprintf( __( 'Could not read table structure for %s.', 'backup-pilot-main' ), $table ) );
 			}
 
 			fwrite( $handle, 'DROP TABLE IF EXISTS `' . str_replace( '`', '``', $table ) . "`;\n" );
@@ -96,7 +96,7 @@ class WPBP_Database {
 	public function finish_export( $file ) {
 		$handle = fopen( $file, 'ab' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot-main' ) );
 		}
 
 		fwrite( $handle, "SET FOREIGN_KEY_CHECKS=1;\n" );
@@ -116,12 +116,12 @@ class WPBP_Database {
 
 		$tables = $this->get_tables();
 		if ( empty( $tables ) ) {
-			return new WP_Error( 'wpbp_no_tables', __( 'No WordPress database tables were found to export.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_no_tables', __( 'No WordPress database tables were found to export.', 'backup-pilot-main' ) );
 		}
 
 		$handle = fopen( $file, 'wb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_write_failed', __( 'Could not write the database export file.', 'backup-pilot-main' ) );
 		}
 
 		fwrite( $handle, "-- Backup Pilot database export\n" );
@@ -175,12 +175,12 @@ class WPBP_Database {
 		global $wpdb;
 
 		if ( ! is_readable( $file ) ) {
-			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'backup-pilot-main' ) );
 		}
 
 		$handle = fopen( $file, 'rb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'backup-pilot-main' ) );
 		}
 
 		$statement = '';
@@ -199,7 +199,7 @@ class WPBP_Database {
 				if ( false === $result ) {
 					fclose( $handle );
 					/* translators: %s: excerpt from the failing SQL statement. */
-					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'backup-pilot' ), substr( trim( $statement ), 0, 120 ) ) );
+					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'backup-pilot-main' ), substr( trim( $statement ), 0, 120 ) ) );
 				}
 				$statement = '';
 			}
@@ -223,12 +223,12 @@ class WPBP_Database {
 		global $wpdb;
 
 		if ( ! is_readable( $file ) ) {
-			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_unreadable', __( 'The database file is not readable.', 'backup-pilot-main' ) );
 		}
 
 		$handle = fopen( $file, 'rb' );
 		if ( ! $handle ) {
-			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'backup-pilot' ) );
+			return new WP_Error( 'wpbp_sql_open_failed', __( 'Could not open the database file.', 'backup-pilot-main' ) );
 		}
 
 		fseek( $handle, max( 0, (int) $offset ) );
@@ -252,7 +252,7 @@ class WPBP_Database {
 				if ( false === $result ) {
 					fclose( $handle );
 					/* translators: %s: excerpt from the failing SQL statement. */
-					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'backup-pilot' ), substr( trim( $statement ), 0, 120 ) ) );
+					return new WP_Error( 'wpbp_sql_query_failed', sprintf( __( 'Database import failed near: %s', 'backup-pilot-main' ), substr( trim( $statement ), 0, 120 ) ) );
 				}
 				$statement = '';
 				++$executed;
