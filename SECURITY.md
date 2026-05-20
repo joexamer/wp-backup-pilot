@@ -14,7 +14,7 @@ Please do not open a public issue for vulnerabilities.
 
 Preferred reporting options:
 
-- Use GitHub Security Advisories for `yousefamer/backup-pilot`.
+- Use GitHub Security Advisories for `joexamer/backup-pilot`.
 - Contact Yousef Amer through the portfolio contact form once the public portfolio link is live.
 
 Helpful details include:

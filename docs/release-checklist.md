@@ -2,7 +2,7 @@
 
 ## GitHub First
 
-- Create `yousefamer/backup-pilot`.
+- Create `joexamer/backup-pilot`.
 - Push the plugin source with `LICENSE`, `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, and `CHANGELOG.md`.
 - Enable Issues and Discussions.
 - Add project boards:

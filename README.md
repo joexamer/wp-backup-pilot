@@ -8,7 +8,7 @@ The project is built as a public engineering case study for serious WordPress pl
 
 Backup Pilot is an MVP intended for local testing, portfolio review, and open-source hardening before WordPress.org submission.
 
-- GitHub repository target: `yousefamer/backup-pilot`
+- GitHub repository target: `joexamer/backup-pilot`
 - License: `GPL-2.0-or-later`
 - Minimum WordPress: `6.0`
 - Minimum PHP: `7.4`
