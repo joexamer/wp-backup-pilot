@@ -33,7 +33,8 @@ class WPBP_Retention {
 		$normal = array();
 		$pre    = array();
 		foreach ( $files as $file ) {
-			if ( 0 === strpos( basename( $file ), 'backup-pilot-pre-restore-' ) ) {
+			$basename = basename( $file );
+			if ( 0 === strpos( $basename, 'backup-pilot-pre-restore-' ) || 0 === strpos( $basename, 'wp-backup-pilot-pre-restore-' ) ) {
 				$pre[] = $file;
 			} else {
 				$normal[] = $file;

@@ -87,7 +87,16 @@ class WPBP_Filesystem {
 	 * @return void
 	 */
 	public static function ensure_storage() {
-		$paths = self::paths();
+		$paths   = self::paths();
+		$uploads = wp_upload_dir( null, false );
+		$legacy  = trailingslashit( $uploads['basedir'] ) . 'wp-backup-pilot';
+
+		if ( is_dir( $legacy ) && ! is_dir( $paths['base'] ) ) {
+			$wp_filesystem = self::wp_filesystem();
+			if ( $wp_filesystem ) {
+				$wp_filesystem->move( $legacy, $paths['base'] );
+			}
+		}
 
 		foreach ( $paths as $path ) {
 			if ( ! is_dir( $path ) ) {
