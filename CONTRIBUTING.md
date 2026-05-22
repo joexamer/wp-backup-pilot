@@ -13,7 +13,6 @@ Thanks for helping improve Backup Pilot. This plugin handles backups, restores, 
 
 - Run PHP lint across plugin files.
 - Run `composer validate --no-check-publish`.
-- Run PHPUnit when a WordPress test environment is configured.
 - Run PHPCS when WordPress Coding Standards are installed.
 - Test backup and restore only on disposable sites.
 - Include screenshots or a short clip for admin UI changes.
@@ -26,7 +25,6 @@ Thanks for helping improve Backup Pilot. This plugin handles backups, restores, 
 - Escape output in admin views.
 - Sanitize and validate all request input.
 - Keep destructive restore behavior staged behind explicit confirmation.
-- Add or update tests for archive validation, checksums, retention, settings, and serialized search/replace.
 
 ## Pull Request Checklist
 

@@ -1,6 +1,6 @@
 # WordPress.org Submission Plan
 
-Backup Pilot should be submitted to WordPress.org after the GitHub-first public release proves the documentation, support flow, tests, and screenshots are ready.
+Backup Pilot should be submitted to WordPress.org after the GitHub-first public release proves the documentation, support flow, and screenshots are ready.
 
 ## Required Assets
 

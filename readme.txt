@@ -2,7 +2,7 @@
 Contributors: yousefamer
 Tags: backup, restore, migration, database backup, s3
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -71,10 +71,18 @@ S3-compatible storage exists as an integration path. Test with your provider bef
 
 = 1.0.0 =
 
-* Initial public MVP for backup, restore, migration, validation, chunked jobs, retention, diagnostics, and S3-compatible storage.
+* Initial public MVP for local backup, restore, and migration workflows.
+* Added ZIP backup package support with manifest, database SQL export, and managed wp-content files.
+* Added admin backup history, package upload, validation, download, restore, and delete flows.
+* Added chunked job infrastructure for long-running backup and restore operations.
+* Added serialized-safe URL replacement for migration workflows.
+* Added restore history, rollback foundations, checksum validation, retention controls, diagnostics, and S3-compatible storage settings.
+* Improved plugin prefixing, path handling, and WordPress.org repository compliance before public release.
+* Removed unnecessary development documentation and non-production files from the release package.
+* Removed direct modification of WordPress active plugin options during restore operations.
 
 == Upgrade Notice ==
 
 = 1.0.0 =
 
-Initial public release candidate. Test on a disposable site before production usage.
+Initial public release candidate. Test backup and restore operations on a disposable clone before using on production websites.

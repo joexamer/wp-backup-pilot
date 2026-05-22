@@ -2,20 +2,20 @@
 /**
  * Uninstall cleanup for Backup Pilot.
  *
- * @package WPBackupPilot
+ * @package BackupPilot
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-delete_option( 'wpbp_settings' );
-delete_option( 'wpbp_jobs' );
-delete_option( 'wpbp_restore_history' );
+delete_option( 'bpilot_settings' );
+delete_option( 'bpilot_jobs' );
+delete_option( 'bpilot_restore_history' );
 
-$wpbp_timestamp = wp_next_scheduled( 'wpbp_scheduled_backup' );
-if ( $wpbp_timestamp ) {
-	wp_unschedule_event( $wpbp_timestamp, 'wpbp_scheduled_backup' );
+$bpilot_timestamp = wp_next_scheduled( 'bpilot_scheduled_backup' );
+if ( $bpilot_timestamp ) {
+	wp_unschedule_event( $bpilot_timestamp, 'bpilot_scheduled_backup' );
 }
 
 // Backup archives are intentionally left in uploads to avoid destructive data loss.

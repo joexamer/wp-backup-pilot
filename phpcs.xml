@@ -3,7 +3,6 @@
 	<description>WordPress Coding Standards for Backup Pilot.</description>
 	<file>.</file>
 	<exclude-pattern>vendor/*</exclude-pattern>
-	<exclude-pattern>tests/*</exclude-pattern>
 	<rule ref="WordPress">
 		<!-- Baseline exclusions for backup/restore internals. These will be narrowed as the public hardening milestone progresses. -->
 		<exclude name="Squiz.Commenting"/>

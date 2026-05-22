@@ -15,3 +15,19 @@ The format follows Keep a Changelog, and releases use semantic versioning.
 - Serialized-safe URL replacement for migration.
 - Restore history, rollback foundations, checksum validation, retention, diagnostics, and S3-compatible storage settings.
 - GPL open-source metadata, contribution guide, security policy, WordPress.org readme, and public launch docs.
+
+### Changed
+
+- Updated internal plugin prefixes to use a more unique and distinct plugin-specific naming convention.
+- Improved plugin path and directory handling to avoid hardcoded WordPress content directory references.
+- Cleaned the production release package to better match WordPress.org submission expectations.
+
+### Fixed
+
+- Removed direct modification of WordPress active plugin options during restore operations.
+- Improved compatibility with non-standard WordPress content and plugin directory setups.
+
+### Removed
+
+- Removed unnecessary development documentation files from the release package.
+- Removed non-production test files from the WordPress.org submission package.

@@ -67,12 +67,6 @@ Validate Composer metadata:
 composer validate --no-check-publish
 ```
 
-Run the available PHPUnit suite when a WordPress test environment is configured:
-
-```bash
-composer test
-```
-
 Run WordPress Coding Standards when PHPCS dependencies are installed:
 
 ```bash
@@ -119,14 +113,47 @@ backup.zip
 
 ## Public Launch Roadmap
 
-- Complete real PHPUnit coverage for manifest generation, archive validation, retention, settings, and serialized search/replace.
 - Add PHPCS pass using WordPress Coding Standards.
 - Record a short demo GIF/video.
 - Add WordPress.org screenshots and assets.
 - Test backup and restore on disposable WordPress installs across PHP `7.4`, `8.0`, `8.1`, `8.2`, `8.3+`.
 - Test S3-compatible upload with at least one provider before documenting it as stable.
 - Open GitHub Discussions for support and ideas.
-- Submit to WordPress.org after the public README, `readme.txt`, screenshots, tests, and support flow are ready.
+- Submit to WordPress.org after the public README, `readme.txt`, screenshots and support flow are ready.
+
+## Changelog
+
+All notable changes to Backup Pilot will be documented in this file.
+
+The format follows Keep a Changelog, and releases use semantic versioning.
+
+### [1.0.0] - Unreleased
+
+#### Added
+
+- Initial public MVP for local backup, restore, and migration workflows.
+- ZIP package format with `manifest.json`, `database.sql`, and managed `wp-content` files.
+- Admin backup history, package upload, validation, download, restore, and delete flows.
+- Chunked job infrastructure for backup and restore work.
+- Serialized-safe URL replacement for migration.
+- Restore history, rollback foundations, checksum validation, retention, diagnostics, and S3-compatible storage settings.
+- GPL open-source metadata, contribution guide, security policy, WordPress.org readme, and public launch docs.
+
+#### Changed
+
+- Updated internal plugin prefixes to use a more unique and distinct plugin-specific naming convention.
+- Improved plugin path and directory handling to avoid hardcoded WordPress content directory references.
+- Cleaned the production release package to better match WordPress.org submission expectations.
+
+#### Fixed
+
+- Removed direct modification of WordPress active plugin options during restore operations.
+- Improved compatibility with non-standard WordPress content and plugin directory setups.
+
+#### Removed
+
+- Removed unnecessary development documentation files from the release package.
+- Removed non-production test files from the WordPress.org submission package.
 
 ## Built By Yousef Amer
 
